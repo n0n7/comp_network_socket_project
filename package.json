@@ -8,9 +8,12 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "concurrently \"yarn workspace server start\" \"yarn workspace client dev\""
+    "dev": "concurrently \"yarn workspace server start\" \"yarn workspace client dev\"",
+    "dev:server": "yarn workspace server start",
+    "dev:client": "yarn workspace client dev"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "concurrently": "^8.2.2"
   }
 }
