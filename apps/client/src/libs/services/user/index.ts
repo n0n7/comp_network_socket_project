@@ -1,4 +1,3 @@
-import { SignInResponse, signIn } from "next-auth/react"
 import { User } from "./types"
 import axios from "axios"
 
@@ -10,31 +9,19 @@ type SignUpData = {
     password: string
 }
 
+type LoginData = {
+    email: string
+    password: string
+}
+
 export class UserService {
     static async signUp(payload: SignUpData) {
-        const res = await axios.post<string>(`${baseURL}/signup`, payload)
+        const res = await axios.post<{ user: User }>(`${baseURL}/signup`, payload)
 
         return res
     }
-    static async signInFn(username: string, password: string) {
-        const res = await axios.post<string>(`${baseURL}/signin`, {
-            username: username,
-            password: password,
-        })
-
-        return res
-    }
-
-    static async login(username: string, password: string) {
-        const res: SignInResponse | undefined = await signIn("credentials", {
-            username: username,
-            password: password,
-            redirect: false,
-        })
-
-        if (!res?.ok) {
-            throw new Error("Invalid credentials")
-        }
+    static async login(payload: LoginData) {
+        const res = await axios.post<{ user: User }>(`${baseURL}/signin`, payload)
 
         return res
     }

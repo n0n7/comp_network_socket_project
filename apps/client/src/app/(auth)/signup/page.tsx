@@ -1,6 +1,7 @@
 "use client"
 
-import { UserService } from "@/libs/services/user"
+import { useUser } from "@/hooks/useUser"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function SignUpPage() {
@@ -10,6 +11,9 @@ export default function SignUpPage() {
         password: "",
     })
 
+    const { signup } = useUser()
+    const router = useRouter()
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setFormData((prevState) => ({
@@ -18,11 +22,15 @@ export default function SignUpPage() {
         }))
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        console.log(formData)
 
-        UserService.signUp(formData)
+        try {
+            await signup(formData)
+            router.push("/")
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
