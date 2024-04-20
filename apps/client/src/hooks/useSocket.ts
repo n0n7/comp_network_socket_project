@@ -9,6 +9,7 @@ export const useSocket = (nickname: string) => {
 
         socket.on("connect", () => {
             console.log("Socket connected")
+            socket.emit("set_name", nickname)
         })
         socket.on("disconnect", () => {
             console.log("Socket disconnected")

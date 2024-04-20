@@ -90,8 +90,6 @@ export async function signin(
             return res.status(400).json({ error: "Incorrect password" })
         }
 
-        // Generate JWT token
-
         res.status(200).json({
             user,
         })

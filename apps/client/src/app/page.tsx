@@ -5,7 +5,7 @@ import { useSocket } from "@/hooks/useSocket"
 import { useUser } from "@/hooks/useUser"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import io from 'socket.io-client'
+import io from "socket.io-client"
 
 export default function Home() {
     const { user, isLoggedIn, login, logout } = useUser()
@@ -15,6 +15,12 @@ export default function Home() {
     const [nickName, setNickName] = useState("")
 
     useSocket(nickName)
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            router.push("/signin")
+        }
+    }, [isLoggedIn, router])
 
     if (!nickName) {
         return (

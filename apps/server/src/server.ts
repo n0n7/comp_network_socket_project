@@ -21,10 +21,6 @@ app.post("/signin", signin)
 
 app.post("/signup", signup)
 
-app.get("/me", (req: Request, res: Response) => {})
-
-app.get("/me", (req: Request, res: Response) => {})
-
 interface Client {
     id: string
     name: string
@@ -37,7 +33,8 @@ io.on("connection", (socket) => {
     console.log(`A user ${socket.id} connected`)
 
     socket.on("set_name", (name: string) => {
-        // TODO: later
+        clients.push({ id: socket.id, name, socket })
+        console.log(clients)
     })
 
     socket.on("message", (message: string) => {
@@ -47,8 +44,24 @@ io.on("connection", (socket) => {
         io.emit("message", { sender, message })
     })
 
+    socket.on("boardcast", (message: string) => {
+        // TODO: later
+    })
+
+    socket.on("create_room", (roomName: string) => {
+        //TODO: later
+    })
+
+    socket.on("join_room", (roomName: string) => {
+        //TODO: later
+    })
+
+    socket.on("kick", () => {
+        // TODO: later
+    })
 
     socket.on("disconnect", () => {
+        console.log(`User ${socket.id} disconnected`)
         const clientIndex = clients.findIndex(
             (client) => client.socket.id === socket.id
         )
