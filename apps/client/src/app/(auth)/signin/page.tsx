@@ -27,7 +27,9 @@ export default function SignInPage() {
         try {
             await login(formData)
             router.push("/")
-        } catch (error) {}
+        } catch (error) {
+            console.log(error)
+        }
     }
     return (
         <div>

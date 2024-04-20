@@ -7,7 +7,11 @@ import { signin, signup } from "./auth"
 
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3000",
+    },
+})
 
 app.use(cors())
 app.use(express.json())
@@ -30,8 +34,7 @@ interface Client {
 const clients: Client[] = []
 
 io.on("connection", (socket) => {
-    let id: string
-    let name: string
+    console.log(`A user ${socket.id} connected`)
 
     socket.on("set_name", (name: string) => {
         // TODO: later
@@ -43,6 +46,7 @@ io.on("connection", (socket) => {
         )?.name
         io.emit("message", { sender, message })
     })
+
 
     socket.on("disconnect", () => {
         const clientIndex = clients.findIndex(

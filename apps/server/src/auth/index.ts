@@ -14,7 +14,6 @@ export async function signup(
 ) {
     try {
         // check if request has email, username, and password
-        console.log("body", req.body)
         const { email, username, password } = req.body
         if (!email || !username || !password) {
             return res.status(400).json({
@@ -70,7 +69,6 @@ export async function signin(
 ) {
     try {
         // check if request has email and password
-        console.log("body", req.body)
         const { email, password } = req.body
         if (!email || !password) {
             return res.status(400).json({
