@@ -1,8 +1,8 @@
-import { initializeApp } from "firebase/app"
-import { getFirestore } from "firebase/firestore"
-import * as dotenv from "dotenv"
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import * as dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
@@ -11,8 +11,8 @@ const firebaseConfig = {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID,
-}
+};
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig)
-export const db = getFirestore(app)
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);

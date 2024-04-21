@@ -1,40 +1,46 @@
-"use client"
+"use client";
 
-import JoinServerPage from "@/components/JoinServerPage"
-import { useSocket } from "@/hooks/useSocket"
-import { useUser } from "@/hooks/useUser"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import io from "socket.io-client"
+import MainPage from "@/components/(MainPage)/MainPage";
+import JoinServerPage from "@/components/JoinServerPage";
+import { useSocket } from "@/hooks/useSocket";
+import { useUser } from "@/hooks/useUser";
+import { useNicknameStore } from "@/stores/nicknameStore";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
 
 export default function Home() {
-    const { user, isLoggedIn, login, logout } = useUser()
+    const { user, isLoggedIn, login, logout } = useUser();
 
-    const router = useRouter()
+    const router = useRouter();
 
-    const [nickName, setNickName] = useState("")
+    const { nickname, setNickname } = useNicknameStore();
 
-    useSocket(nickName)
+    useSocket();
 
     useEffect(() => {
         if (!isLoggedIn) {
-            router.push("/signin")
+            router.push("/signin");
         }
-    }, [isLoggedIn, router])
+    }, [isLoggedIn, router]);
 
-    if (!nickName) {
+    if (!nickname) {
         return (
             <JoinServerPage
-                handleSubmit={(newNickName) => setNickName(newNickName)}
+                handleSubmit={(newNickName) => setNickname(newNickName)}
             />
-        )
+        );
     }
     return (
-        <div>
-            <h1>Home</h1>
-            <p>Welcome, {nickName}</p>
-            <></>
-            <button onClick={logout}>Logout</button>
-        </div>
-    )
+        <>
+            <div>
+                <h1>Home</h1>
+                <p>Welcome, {nickname}</p>
+                <button onClick={logout}>Logout</button>
+            </div>
+            <div>
+                <MainPage />
+            </div>
+        </>
+    );
 }

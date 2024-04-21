@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { useUser } from "@/hooks/useUser"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useUser } from "@/hooks/useUser";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function SignInPage() {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
-    })
+    });
 
-    const { login } = useUser()
-    const router = useRouter()
+    const { login } = useUser();
+    const router = useRouter();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
-        }))
-    }
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+        e.preventDefault();
 
         try {
-            await login(formData)
-            router.push("/")
+            await login(formData);
+            router.push("/");
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
     return (
         <div>
             <h1>Sign In</h1>
@@ -54,7 +54,8 @@ export default function SignInPage() {
                     />
                 </div>
                 <button type="submit">Sign In</button>
+                <button onClick={() => router.push("/signup")}>Sign Up</button>
             </form>
         </div>
-    )
+    );
 }
