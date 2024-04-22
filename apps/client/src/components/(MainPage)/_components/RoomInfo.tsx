@@ -3,10 +3,11 @@ import { useSocketStore } from "@/stores/socketStore"
 export default function RoomInfo() {
     const { rooms, socket, roomName, clients, setRoomName } = useSocketStore()
 
-    const room = rooms.find((room) => room.name === roomName)
-    const clientInRoom = clients.filter(
-        (client) => client.roomName === roomName
-    )
+    const room = rooms[roomName]
+    if (!room) return <></>
+    
+    const clientInRoom = room.clientIds.map((clientId) => clients[clientId])
+
 
     return (
         <div>

@@ -7,7 +7,7 @@ export default function ClientList() {
         <div>
             <h2>Client List</h2>
             <ul>
-                {clients.map((client) => (
+                {Object.values(clients).map((client) => (
                     <li key={client.id}>{client.name}</li>
                 ))}
             </ul>

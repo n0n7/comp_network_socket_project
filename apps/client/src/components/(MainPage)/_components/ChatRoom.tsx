@@ -5,7 +5,7 @@ type Props = {}
 
 export default function ChatRoom({}: Props) {
     const { rooms, roomName, setRoomName, socket } = useSocketStore()
-    const room = rooms.find((room) => room.name === roomName)
+    const room = rooms[roomName]
 
     const handleLeaveRoom = () => {
         console.log(`Leaving room ${roomName}`)

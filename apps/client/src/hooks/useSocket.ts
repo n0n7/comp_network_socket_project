@@ -1,4 +1,10 @@
-import { Client, Room, useSocketStore } from "@/stores/socketStore"
+import {
+    Client,
+    ClientsData,
+    Room,
+    RoomsData,
+    useSocketStore,
+} from "@/stores/socketStore"
 import { useEffect } from "react"
 import { io } from "socket.io-client"
 
@@ -14,11 +20,11 @@ export const useSocket = () => {
                 socket.emit("set_name", socketStore.nickname)
             })
 
-            socket.on("clients", (clients: Client[]) => {
+            socket.on("clients", (clients: ClientsData) => {
                 socketStore.setClients(clients)
             })
 
-            socket.on("rooms", (rooms: Room[]) => {
+            socket.on("rooms", (rooms: RoomsData) => {
                 console.log(rooms)
                 socketStore.setRooms(rooms)
             })

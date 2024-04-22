@@ -15,7 +15,7 @@ export default function RoomList() {
         <div>
             <h2>Room List</h2>
             <ul>
-                {rooms.map((room) => (
+                {Object.values(rooms).map((room) => (
                     <li key={room.name}>
                         {room.name} ({room.clientIds.length}){" "}
                         <button onClick={() => handleJoinRoom(room.name)}>
