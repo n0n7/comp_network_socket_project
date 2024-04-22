@@ -62,26 +62,35 @@ io.on("connection", (socket) => {
         socket.emit("rooms", rooms)
     })
 
-    socket.on("message", (message: string, clientIds?: string) => {
-        const sender = clients[socket.id]
+    socket.on(
+        "message",
+        ({
+            message,
+            clientIds,
+            roomName,
+        }: {
+            message: string
+            clientIds?: string
+            roomName?: string
+        }) => {
+            const sender = clients[socket.id]
 
-        const room = rooms[sender.roomName!]
-
-        if (clientIds) {
-            clients[clientIds].socket.emit("message", {
-                senderId: socket.id,
-                message,
-                type: "private",
-            })
-        } else {
-            io.to(room.name).emit("message", {
-                senderId: socket.id,
-                message,
-                type: "public",
-                roomName: room.name,
-            })
+            if (clientIds) {
+                clients[clientIds].socket.emit("message", {
+                    senderId: socket.id,
+                    message,
+                    type: "private",
+                })
+            } else {
+                io.to(roomName!).emit("message", {
+                    senderId: socket.id,
+                    message,
+                    type: "public",
+                    roomName: roomName,
+                })
+            }
         }
-    })
+    )
 
     socket.on("create_room", (roomName: string) => {
         if (rooms[roomName]) {

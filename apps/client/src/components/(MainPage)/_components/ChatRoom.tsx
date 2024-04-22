@@ -24,12 +24,14 @@ export default function ChatRoom({ roomName }: Props) {
         const roomNameList = joinedRoomList.filter((name) => name !== roomName)
         setJoinedRoomList(roomNameList)
         setSelectedRoom("")
-
     }
 
     const [msg, setMsg] = useState("")
     const sendMessage = (text: string) => {
-        socket!.emit("message", text)
+        socket!.emit("message", {
+            message: text,
+            roomName: roomName,
+        })
         setMsg("")
     }
 
