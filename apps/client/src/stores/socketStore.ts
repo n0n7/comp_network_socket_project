@@ -7,6 +7,12 @@ export type Client = {
     roomName?: string
 }
 
+export type Message = {
+    senderId: string
+    message: string
+    messageId: string
+}
+
 export type Room = {
     name: string
     clientIds: string[]
@@ -23,6 +29,9 @@ type SocketStore = {
     setRooms: (room: Room[]) => void
     roomName: string
     setRoomName: (roomName: string) => void
+    messages: Message[]
+    setMessages: (messages: Message[]) => void
+    reset: () => void
 }
 
 export const useSocketStore = create<SocketStore>((set) => ({
@@ -36,4 +45,15 @@ export const useSocketStore = create<SocketStore>((set) => ({
     setRooms: (rooms: Room[]) => set({ rooms }),
     roomName: "",
     setRoomName: (roomName: string) => set({ roomName }),
+    messages: [],
+    setMessages: (messages: Message[]) => set({ messages }),
+    reset: () =>
+        set({
+            socket: null,
+            nickname: "",
+            clients: [],
+            rooms: [],
+            roomName: "",
+            messages: [],
+        }),
 }))

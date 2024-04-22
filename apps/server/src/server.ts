@@ -41,15 +41,10 @@ io.on("connection", (socket) => {
 
     socket.on("set_name", (name: string) => {
         clients.push({ id: socket.id, name, socket })
-        console.log(clients.length)
         io.emit(
             "clients",
             clients.map(({ id, name, roomName }) => ({ id, name, roomName }))
         )
-        socket.emit("rooms", rooms)
-    })
-
-    socket.on("get_rooms", () => {
         socket.emit("rooms", rooms)
     })
 
@@ -95,6 +90,10 @@ io.on("connection", (socket) => {
 
         // TODO: emit to all clients
         io.emit("rooms", rooms)
+        io.emit(
+            "clients",
+            clients.map(({ id, name, roomName }) => ({ id, name, roomName }))
+        )
     })
 
     socket.on("join_room", (roomName: string) => {
@@ -120,6 +119,14 @@ io.on("connection", (socket) => {
             })
 
             io.emit("rooms", rooms)
+            io.emit(
+                "clients",
+                clients.map(({ id, name, roomName }) => ({
+                    id,
+                    name,
+                    roomName,
+                }))
+            )
         }
     })
 
@@ -132,14 +139,31 @@ io.on("connection", (socket) => {
             socket.leave(roomName!) // Leave the room
             // Clear the client's room property
             clients[clientIndex].roomName = undefined
+            // Remove the client from the room's clientIds
+            const roomIndex = rooms.findIndex((room) => room.name === roomName)
+            if (roomIndex !== -1) {
+                const clientIndexInRoom = rooms[roomIndex].clientIds.indexOf(
+                    socket.id
+                )
+                if (clientIndexInRoom !== -1) {
+                    rooms[roomIndex].clientIds.splice(clientIndexInRoom, 1)
+                }
+            }
             // Send a confirmation message to the client
             io.to(roomName!).emit("room_message", {
                 message: `${clients[clientIndex].name} has joined the room`,
             })
 
             io.emit("rooms", rooms)
+            io.emit(
+                "clients",
+                clients.map(({ id, name, roomName }) => ({
+                    id,
+                    name,
+                    roomName,
+                }))
+            )
         }
-
     })
 
     socket.on("kick", (clientId: string) => {

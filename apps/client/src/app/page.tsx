@@ -1,35 +1,36 @@
-"use client";
+"use client"
 
-import MainPage from "@/components/(MainPage)/MainPage";
-import JoinServerPage from "@/components/JoinServerPage";
-import { useSocket } from "@/hooks/useSocket";
-import { useUser } from "@/hooks/useUser";
-import { useSocketStore } from "@/stores/socketStore";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import MainPage from "@/components/(MainPage)/MainPage"
+import JoinServerPage from "@/components/JoinServerPage"
+import { useSocket } from "@/hooks/useSocket"
+import { useUser } from "@/hooks/useUser"
+import { useSocketStore } from "@/stores/socketStore"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import io from "socket.io-client"
 
 export default function Home() {
-    const { user, isLoggedIn, login, logout } = useUser();
+    const { user, isLoggedIn, login, logout } = useUser()
 
-    const router = useRouter();
+    const router = useRouter()
 
-    const { nickname, setNickname } = useSocketStore();
+    const { nickname, setNickname, reset } = useSocketStore()
 
-    useSocket();
+    useSocket()
 
     useEffect(() => {
         if (!isLoggedIn) {
-            router.push("/signin");
+            reset()
+            router.push("/signin")
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, router, reset])
 
     if (!nickname) {
         return (
             <JoinServerPage
                 handleSubmit={(newNickName) => setNickname(newNickName)}
             />
-        );
+        )
     }
     return (
         <>
@@ -42,5 +43,5 @@ export default function Home() {
                 <MainPage />
             </div>
         </>
-    );
+    )
 }
