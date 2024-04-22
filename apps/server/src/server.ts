@@ -61,16 +61,24 @@ io.on("connection", (socket) => {
         const room = rooms[sender.roomName!]
 
         if (clientIds) {
-            clients[clientIds].socket.emit("message", { sender, message })
+            clients[clientIds].socket.emit("message", {
+                senderId: socket.id,
+                message,
+                type: "private",
+            })
         } else {
-            io.to(room.name).emit("message", { sender, message })
+            io.to(room.name).emit("message", {
+                senderId: socket.id,
+                message,
+                type: "public",
+            })
         }
     })
 
     socket.on("create_room", (roomName: string) => {
-        console.log("Creating room", roomName)
         if (rooms[roomName]) {
             // TODO: error handling
+            socket.emit("error", "Room already exists")
             return
         }
         rooms[roomName] = { name: roomName, clientIds: [socket.id] }
@@ -88,7 +96,7 @@ io.on("connection", (socket) => {
         // Check if the room exists
         const room = rooms[roomName]
         if (!room) {
-            socket.emit("room_error", "Room does not exist")
+            socket.emit("error", "Room does not exist")
         } else {
             // Join the room
             socket.join(roomName)
@@ -97,9 +105,10 @@ io.on("connection", (socket) => {
             // update room's clientIds
             room.clientIds.push(socket.id)
             // Send a confirmation message to all client in room
-            io.to(roomName).emit("room_message", {
-                message: `${clients[socket.id].name} has joined the room`,
-            })
+            io.to(roomName).emit(
+                "broadcast",
+                `${clients[socket.id].name} has joined the room`
+            )
 
             io.emit("rooms", rooms)
             io.emit("clients", getClients())
@@ -146,9 +155,10 @@ io.on("connection", (socket) => {
                     })
                     kickedClient.socket.leave(roomName)
 
-                    io.to(roomName).emit("room_message", {
-                        message: `${kickedClient.name} has been kicked from the room`,
-                    })
+                    io.to(roomName).emit(
+                        "broadcast",
+                        `${kickedClient.name} has been kicked from the room`
+                    )
 
                     io.emit("rooms", rooms)
                     io.emit("clients", getClients())

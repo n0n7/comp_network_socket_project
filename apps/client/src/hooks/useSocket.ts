@@ -1,11 +1,12 @@
 import {
     Client,
     ClientsData,
+    Message,
     Room,
     RoomsData,
     useSocketStore,
 } from "@/stores/socketStore"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { io } from "socket.io-client"
 
 export const useSocket = () => {
@@ -27,6 +28,36 @@ export const useSocket = () => {
             socket.on("rooms", (rooms: RoomsData) => {
                 console.log(rooms)
                 socketStore.setRooms(rooms)
+            })
+
+            socket.on("error", (error: string) => {
+                alert(error)
+            })
+
+            socket.on(
+                "message",
+                (message: {
+                    senderId: string
+                    message: string
+                    type: string
+                }) => {
+                    console.log("Message received", message)
+                    const prevMessages = socketStore.messages
+                    socketStore.setMessages([...prevMessages, message])
+                }
+            )
+
+            socket.on("broadcast", (message: string) => {
+                // TODO: broadcast message
+            })
+
+            socket.on("kicked", () => {
+                alert("You have been kicked from the room")
+                socketStore.setRoomName("")
+            })
+
+            socket.on("error", (error: string) => {
+                alert(error)
             })
 
             socket.on("disconnect", () => {

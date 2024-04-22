@@ -12,7 +12,7 @@ export type ClientsData = { [clientId: string]: Client }
 export type Message = {
     senderId: string
     message: string
-    // messageId: string
+    type: string
 }
 
 export type Room = {
@@ -57,7 +57,7 @@ export const useSocketStore = create<SocketStore>((set) => ({
             nickname: "",
             clients: {},
             rooms: {},
-            roomName: "",
             messages: [],
+            roomName: "",
         }),
 }))

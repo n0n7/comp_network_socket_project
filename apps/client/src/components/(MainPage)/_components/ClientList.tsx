@@ -8,7 +8,9 @@ export default function ClientList() {
             <h2>Client List</h2>
             <ul>
                 {Object.values(clients).map((client) => (
-                    <li key={client.id}>{client.name}</li>
+                    <li key={client.id}>
+                        {client.name} {client.roomName ? `in room ${client?.roomName}` : ""}
+                    </li>
                 ))}
             </ul>
         </div>

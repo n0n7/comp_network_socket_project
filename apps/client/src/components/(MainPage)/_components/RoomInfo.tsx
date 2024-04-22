@@ -5,9 +5,8 @@ export default function RoomInfo() {
 
     const room = rooms[roomName]
     if (!room) return <></>
-    
-    const clientInRoom = room.clientIds.map((clientId) => clients[clientId])
 
+    const clientInRoom = room.clientIds.map((clientId) => clients[clientId])
 
     return (
         <div>
@@ -17,9 +16,10 @@ export default function RoomInfo() {
                 <h3>Number of Clients: {clientInRoom.length}</h3>
                 <div>Client List</div>
                 <ul>
-                    {clientInRoom.map((client) => (
-                        <li key={client.id}>{client.name}</li>
-                    ))}
+                    {clientInRoom.map((client) => {
+                        if (!client) return <></>
+                        return <li key={client.id}>{client.name}</li>
+                    })}
                 </ul>
             </div>
         </div>
