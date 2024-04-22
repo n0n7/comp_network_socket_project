@@ -4,7 +4,7 @@ import MainPage from "@/components/(MainPage)/MainPage";
 import JoinServerPage from "@/components/JoinServerPage";
 import { useSocket } from "@/hooks/useSocket";
 import { useUser } from "@/hooks/useUser";
-import { useNicknameStore } from "@/stores/nicknameStore";
+import { useSocketStore } from "@/stores/socketStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
@@ -14,7 +14,7 @@ export default function Home() {
 
     const router = useRouter();
 
-    const { nickname, setNickname } = useNicknameStore();
+    const { nickname, setNickname } = useSocketStore();
 
     useSocket();
 

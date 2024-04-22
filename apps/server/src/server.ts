@@ -41,15 +41,16 @@ io.on("connection", (socket) => {
 
     socket.on("set_name", (name: string) => {
         clients.push({ id: socket.id, name, socket })
-        console.log(clients)
-    })
-
-    socket.on("get_clients", () => {
-        io.emit("clients", clients)
+        console.log(clients.length)
+        io.emit(
+            "clients",
+            clients.map(({ id, name, roomName }) => ({ id, name, roomName }))
+        )
+        socket.emit("rooms", rooms)
     })
 
     socket.on("get_rooms", () => {
-        io.emit("rooms", rooms)
+        socket.emit("rooms", rooms)
     })
 
     socket.on("message", (message: string, clientIds?: string) => {
@@ -75,6 +76,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on("create_room", (roomName: string) => {
+        console.log("Creating room", roomName)
         if (rooms.some((room) => room.name === roomName)) {
             // TODO: error handling
             return
@@ -92,6 +94,7 @@ io.on("connection", (socket) => {
         }
 
         // TODO: emit to all clients
+        io.emit("rooms", rooms)
     })
 
     socket.on("join_room", (roomName: string) => {
@@ -109,10 +112,14 @@ io.on("connection", (socket) => {
             if (clientIndex !== -1) {
                 clients[clientIndex].roomName = roomName
             }
+            // update room's clientIds
+            room.clientIds.push(socket.id)
             // Send a confirmation message to all client in room
             io.to(roomName).emit("room_message", {
                 message: `${clients[clientIndex].name} has joined the room`,
             })
+
+            io.emit("rooms", rooms)
         }
     })
 
@@ -129,7 +136,10 @@ io.on("connection", (socket) => {
             io.to(roomName!).emit("room_message", {
                 message: `${clients[clientIndex].name} has joined the room`,
             })
+
+            io.emit("rooms", rooms)
         }
+
     })
 
     socket.on("kick", (clientId: string) => {
@@ -156,6 +166,8 @@ io.on("connection", (socket) => {
                             message: "You have been kicked from the room",
                         })
                         clients[kickedClientIndex].socket.leave(roomName)
+
+                        io.emit("rooms", rooms)
                     }
                 }
             }
@@ -184,7 +196,15 @@ io.on("connection", (socket) => {
                     }
                 }
             }
-            io.emit("clients", clients)
+            io.emit(
+                "clients",
+                clients.map(({ id, name, roomName }) => ({
+                    id,
+                    name,
+                    roomName,
+                }))
+            )
+            io.emit("rooms", rooms)
         }
     })
 })
