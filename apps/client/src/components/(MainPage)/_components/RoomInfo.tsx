@@ -1,27 +1,55 @@
-import { useSocketStore } from "@/stores/socketStore"
+import { useSocketStore } from "@/stores/socketStore";
+import { useState } from "react";
+import { IoArrowForwardCircleOutline } from "react-icons/io5";
 
 export default function RoomInfo() {
-    const { rooms, socket, roomName, clients, setRoomName } = useSocketStore()
+    const { rooms, socket, roomName, clients, setRoomName } = useSocketStore();
+    const [showedInfo, setShowedInfo] = useState(true);
 
-    const room = rooms[roomName]
-    if (!room) return <></>
+    const room = rooms[roomName];
+    if (!room) return <></>;
 
-    const clientInRoom = room.clientIds.map((clientId) => clients[clientId])
+    const clientInRoom = room.clientIds.map((clientId) => clients[clientId]);
 
     return (
         <div>
-            <h2>Room Info</h2>
-            <div>
-                <h3>Room Name: {roomName}</h3>
-                <h3>Number of Clients: {clientInRoom.length}</h3>
-                <div>Client List</div>
-                <ul>
-                    {clientInRoom.map((client) => {
-                        if (!client) return <></>
-                        return <li key={client.id}>{client.name}</li>
-                    })}
-                </ul>
+            <div className="flex justify-between">
+                <h2 className="text-xl font-semibold">Room Info</h2>
+                <button
+                    className="border-2 border-gray-300 rounded-md p-1/2 ml-2 bg-orange-600 text-white px-1"
+                    onClick={() => setShowedInfo(!showedInfo)}
+                >
+                    {showedInfo ? "Hide" : "Show"}
+                </button>
             </div>
+            {showedInfo ? (
+                <div>
+                    <h3 className="text-md font-semibold">
+                        Room Name:{" "}
+                        <span className="font-normal">{roomName}</span>
+                    </h3>
+                    <h3 className="font-semibold">
+                        Number of members:{" "}
+                        <span className="font-normal">
+                            {clientInRoom.length}
+                        </span>
+                    </h3>
+                    <div className="font-semibold">Member List</div>
+                    <ul>
+                        {clientInRoom.map((client) => {
+                            if (!client) return <></>;
+                            return (
+                                <div className="flex" key={client.id}>
+                                    <IoArrowForwardCircleOutline className="mr-2" />{" "}
+                                    {client.name}
+                                </div>
+                            );
+                        })}
+                    </ul>
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
-    )
+    );
 }

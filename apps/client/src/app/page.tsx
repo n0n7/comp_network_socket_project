@@ -1,47 +1,59 @@
-"use client"
+"use client";
 
-import MainPage from "@/components/(MainPage)/MainPage"
-import JoinServerPage from "@/components/JoinServerPage"
-import { useSocket } from "@/hooks/useSocket"
-import { useUser } from "@/hooks/useUser"
-import { useSocketStore } from "@/stores/socketStore"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import io from "socket.io-client"
+import MainPage from "@/components/(MainPage)/MainPage";
+import JoinServerPage from "@/components/JoinServerPage";
+import { useSocket } from "@/hooks/useSocket";
+import { useUser } from "@/hooks/useUser";
+import { useSocketStore } from "@/stores/socketStore";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
 
 export default function Home() {
-    const { user, isLoggedIn, login, logout } = useUser()
+    const { user, isLoggedIn, login, logout } = useUser();
 
-    const router = useRouter()
+    const router = useRouter();
 
-    const { nickname, setNickname, reset } = useSocketStore()
+    const { nickname, setNickname, reset } = useSocketStore();
 
-    useSocket()
+    useSocket();
 
     useEffect(() => {
         if (!isLoggedIn) {
-            reset()
-            router.push("/signin")
+            reset();
+            router.push("/signin");
         }
-    }, [isLoggedIn, router, reset])
+    }, [isLoggedIn, router, reset]);
 
     if (!nickname) {
         return (
-            <JoinServerPage
-                handleSubmit={(newNickName) => setNickname(newNickName)}
-            />
-        )
+            <div>
+                <JoinServerPage
+                    handleSubmit={(newNickName) => setNickname(newNickName)}
+                />
+            </div>
+        );
     }
     return (
-        <>
-            <div>
-                <h1>Home</h1>
-                <p>Welcome, {nickname}</p>
-                <button onClick={logout}>Logout</button>
+        <div className="flex flex-col items-center justify-center">
+            <div className="w-3/12 bg-slate-200 p-2">
+                <div>
+                    <h1 className="text-3xl font-bold">Home</h1>
+                    <p>
+                        Welcome,{" "}
+                        <span className="font-semibold">{nickname}</span>
+                    </p>
+                </div>
+                <button
+                    className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
+                    onClick={logout}
+                >
+                    Logout
+                </button>
+                <div className="mt-4">
+                    <MainPage />
+                </div>
             </div>
-            <div>
-                <MainPage />
-            </div>
-        </>
-    )
+        </div>
+    );
 }

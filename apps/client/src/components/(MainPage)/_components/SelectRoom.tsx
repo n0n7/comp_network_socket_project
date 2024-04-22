@@ -6,7 +6,7 @@ type Props = {};
 export default function SelectRoom({}: Props) {
     return (
         <>
-            <div>SelectRoom</div>
+            <div className="text-lg font-medium">Create Room</div>
 
             <CreateRoom />
         </>
