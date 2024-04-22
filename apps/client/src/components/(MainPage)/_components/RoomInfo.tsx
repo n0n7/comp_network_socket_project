@@ -2,8 +2,12 @@ import { useSocketStore } from "@/stores/socketStore";
 import { useState } from "react";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
 
-export default function RoomInfo() {
-    const { rooms, socket, roomName, clients, setRoomName } = useSocketStore();
+type Props = {
+    roomName: string
+}
+
+export default function RoomInfo({ roomName }: Props) {
+    const { rooms, clients } = useSocketStore()
     const [showedInfo, setShowedInfo] = useState(true);
 
     const room = rooms[roomName];

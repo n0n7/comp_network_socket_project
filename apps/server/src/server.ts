@@ -28,6 +28,13 @@ interface Client {
     roomName?: string
 }
 
+interface Message {
+    senderId: string
+    message: string
+    type: "public" | "private"
+    roomName?: string
+}
+
 interface ChatRoom {
     name: string
     clientIds: string[]
@@ -71,6 +78,7 @@ io.on("connection", (socket) => {
                 senderId: socket.id,
                 message,
                 type: "public",
+                roomName: room.name,
             })
         }
     })
@@ -105,10 +113,10 @@ io.on("connection", (socket) => {
             // update room's clientIds
             room.clientIds.push(socket.id)
             // Send a confirmation message to all client in room
-            io.to(roomName).emit(
-                "broadcast",
-                `${clients[socket.id].name} has joined the room`
-            )
+            io.to(roomName).emit("broadcast", {
+                message: `${clients[socket.id].name} has joined the room`,
+                roomName: roomName,
+            })
 
             io.emit("rooms", rooms)
             io.emit("clients", getClients())
@@ -129,8 +137,9 @@ io.on("connection", (socket) => {
                 room.clientIds.splice(clientIndexInRoom, 1)
             }
             // Send a confirmation message to the client
-            io.to(roomName!).emit("room_message", {
-                message: `${clients[socket.id].name} has joined the room`,
+            io.to(roomName).emit("broadcast", {
+                message: `${clients[socket.id].name} has left the room`,
+                roomName: roomName,
             })
 
             io.emit("rooms", rooms)
@@ -151,14 +160,14 @@ io.on("connection", (socket) => {
                     room.clientIds.splice(clientIndexInRoom, 1)
                     kickedClient.roomName == undefined
                     io.to(clientId).emit("kicked", {
-                        message: "You have been kicked from the room",
+                        roomName: roomName,
                     })
                     kickedClient.socket.leave(roomName)
 
-                    io.to(roomName).emit(
-                        "broadcast",
-                        `${kickedClient.name} has been kicked from the room`
-                    )
+                    io.to(roomName).emit("broadcast", {
+                        message: `${kickedClient.name} has been kicked from the room`,
+                        roomName: roomName,
+                    })
 
                     io.emit("rooms", rooms)
                     io.emit("clients", getClients())
@@ -179,6 +188,11 @@ io.on("connection", (socket) => {
             if (clientIndexInRoom !== -1) {
                 room.clientIds.splice(clientIndexInRoom, 1)
             }
+
+            io.to(roomName).emit("broadcast", {
+                message: `${disconnectedClient.name} has left the room`,
+                roomName: roomName,
+            })
         }
         io.emit("clients", getClients())
         io.emit("rooms", rooms)

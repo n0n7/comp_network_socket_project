@@ -1,32 +1,47 @@
-import { useSocket } from "@/hooks/useSocket";
-import { useSocketStore } from "@/stores/socketStore";
-import React, { useState } from "react";
+import { useSocket } from "@/hooks/useSocket"
+import { useSocketStore } from "@/stores/socketStore"
+import React, { useState } from "react"
 
-type Props = {};
+type Props = {
+    roomName: string
+}
 
-export default function ChatRoom({}: Props) {
-    const { rooms, clients, roomName, setRoomName, socket, messages } =
-        useSocketStore();
-    const room = rooms[roomName];
+export default function ChatRoom({ roomName }: Props) {
+    const {
+        rooms,
+        clients,
+        joinedRoomList,
+        setJoinedRoomList,
+        setSelectedRoom,
+        socket,
+        roomsMesages,
+    } = useSocketStore()
+    const room = rooms[roomName]
 
     const handleLeaveRoom = () => {
-        console.log(`Leaving room ${roomName}`);
-        socket!.emit("leave_room");
-        setRoomName("");
-    };
+        console.log(`Leaving room ${roomName}`)
+        socket!.emit("leave_room")
+        const roomNameList = joinedRoomList.filter((name) => name !== roomName)
+        setJoinedRoomList(roomNameList)
+        setSelectedRoom("")
 
-    const [msg, setMsg] = useState("");
+    }
+
+    const [msg, setMsg] = useState("")
     const sendMessage = (text: string) => {
-        socket!.emit("message", text);
-    };
+        socket!.emit("message", text)
+        setMsg("")
+    }
 
-    if (!room)
+    if (!room || !roomsMesages[roomName])
         return (
             <>
                 <div>ChatRoom Not Found</div>
                 <button onClick={handleLeaveRoom}>Leave</button>
             </>
-        );
+        )
+
+    const messages = roomsMesages[roomName]
 
     return (
         <>
@@ -57,7 +72,7 @@ export default function ChatRoom({}: Props) {
                     placeholder="Type your message here"
                     type="text"
                     onChange={(e) => {
-                        setMsg(e.target.value);
+                        setMsg(e.target.value)
                     }}
                 />
                 <button
@@ -68,5 +83,5 @@ export default function ChatRoom({}: Props) {
                 </button>
             </div>
         </>
-    );
+    )
 }

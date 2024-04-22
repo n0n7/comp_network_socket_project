@@ -1,10 +1,10 @@
-import { useSocketStore } from "@/stores/socketStore";
-import { useState } from "react";
-import { IoArrowForwardCircleOutline } from "react-icons/io5";
+import { useSocketStore } from "@/stores/socketStore"
+import { useState } from "react"
+import { IoArrowForwardCircleOutline } from "react-icons/io5"
 
 export default function ClientList() {
-    const { clients } = useSocketStore();
-    const [showedClients, setShowedClients] = useState(true);
+    const { clients } = useSocketStore()
+    const [showedClients, setShowedClients] = useState(true)
 
     return (
         <div>
@@ -23,9 +23,6 @@ export default function ClientList() {
                         <div className="flex text-center" key={client.id}>
                             <IoArrowForwardCircleOutline className="mr-2" />
                             {client.name}{" "}
-                            {client.roomName
-                                ? `in room ${client?.roomName}`
-                                : ""}
                         </div>
                     ))}
                 </ul>
@@ -33,5 +30,5 @@ export default function ClientList() {
                 <></>
             )}
         </div>
-    );
+    )
 }

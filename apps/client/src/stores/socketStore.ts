@@ -13,7 +13,10 @@ export type Message = {
     senderId: string
     message: string
     type: string
+    roomName?: string
 }
+
+export type MessageData = { [key: string]: Message[] }
 
 export type Room = {
     name: string
@@ -30,11 +33,15 @@ type SocketStore = {
     clients: ClientsData
     setClients: (clients: ClientsData) => void
     rooms: RoomsData
-    setRooms: (room: RoomsData) => void
-    roomName: string
-    setRoomName: (roomName: string) => void
-    messages: Message[]
-    setMessages: (messages: Message[]) => void
+    setRooms: (rooms: RoomsData) => void
+    joinedRoomList: string[]
+    setJoinedRoomList: (joinedRoomList: string[]) => void
+    roomsMesages: MessageData
+    setRoomsMessages: (roomsMesages: MessageData) => void
+    privateMessage: MessageData
+    setPrivateMessage: (privateMessage: MessageData) => void
+    selectedRoom: string
+    setSelectedRoom: (selectedRoom: string) => void
     reset: () => void
 }
 
@@ -47,17 +54,23 @@ export const useSocketStore = create<SocketStore>((set) => ({
     setClients: (clients: ClientsData) => set({ clients }),
     rooms: {},
     setRooms: (rooms: RoomsData) => set({ rooms }),
-    roomName: "",
-    setRoomName: (roomName: string) => set({ roomName }),
-    messages: [],
-    setMessages: (messages: Message[]) => set({ messages }),
+    joinedRoomList: [],
+    setJoinedRoomList: (joinedRoomList: string[]) => set({ joinedRoomList }),
+    roomsMesages: {},
+    setRoomsMessages: (roomsMesages: MessageData) => set({ roomsMesages }),
+    privateMessage: {},
+    setPrivateMessage: (privateMessage: MessageData) => set({ privateMessage }),
+    selectedRoom: "",
+    setSelectedRoom: (selectedRoom: string) => set({ selectedRoom }),
     reset: () =>
         set({
             socket: null,
             nickname: "",
             clients: {},
             rooms: {},
-            messages: [],
-            roomName: "",
+            roomsMesages: {},
+            privateMessage: {},
+            joinedRoomList: [],
+            selectedRoom: "",
         }),
 }))

@@ -4,14 +4,29 @@ import React, { useState } from "react";
 type Props = {};
 
 export default function CreateRoom({}: Props) {
-    const { socket, setRoomName } = useSocketStore();
+    const {
+        socket,
+        joinedRoomList,
+        setJoinedRoomList,
+        setSelectedRoom,
+        roomsMesages,
+        setRoomsMessages,
+    } = useSocketStore()
 
     const [roomNameInput, setRoomNameInput] = useState("");
 
     const handleSubmit = () => {
         if (roomNameInput) {
-            socket!.emit("create_room", roomNameInput);
-            setRoomName(roomNameInput);
+            socket!.emit("create_room", roomNameInput)
+            setJoinedRoomList([...joinedRoomList, roomNameInput])
+            setSelectedRoom(roomNameInput)
+            const roomMsgs = roomsMesages[roomNameInput]
+            if (!roomMsgs) {
+                setRoomsMessages({
+                    ...roomsMesages,
+                    [roomNameInput]: [],
+                })
+            }
         }
     };
     return (
