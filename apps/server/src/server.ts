@@ -41,7 +41,7 @@ interface ChatRoom {
 }
 
 const clients: { [clientId: string]: Client } = {}
-const rooms: { [roomName: string]: ChatRoom } = ({} = {})
+const rooms: { [roomName: string]: ChatRoom } = {}
 
 function getClients() {
     // return client object but remove the socket in every client

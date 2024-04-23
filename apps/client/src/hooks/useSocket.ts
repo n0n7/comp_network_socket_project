@@ -16,6 +16,20 @@ export const useSocket = () => {
         if (socketStore.nickname) {
             const socket = io(process.env.NEXT_PUBLIC_API || "");
 
+            socket.on("connect", () => {
+                console.log("Socket connected");
+                socket.emit("set_name", socketStore.nickname);
+            });
+
+            socket.on("clients", (clients: ClientsData) => {
+                socketStore.setClients(clients);
+            });
+
+            socket.on("rooms", (rooms: RoomsData) => {
+                console.log(rooms);
+                socketStore.setRooms(rooms);
+            });
+
             socket.on("error", (error: string) => {
                 alert(error);
             });
