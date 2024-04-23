@@ -18,7 +18,7 @@ export default function ChatRoom({ roomName }: Props) {
     } = useSocketStore();
     const socketStore = useSocketStore();
     const room = rooms[roomName];
-    const [chatContainerRef, setChatContainer] = useState<HTMLDivElement>();
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const handleLeaveRoom = () => {
         console.log(`Leaving room ${roomName}`);
@@ -35,20 +35,7 @@ export default function ChatRoom({ roomName }: Props) {
             roomName: roomName,
         });
         setMsg("");
-        // if (chatContainerRef.current) {
-        //     chatContainerRef.current.scrollTop =
-        //         chatContainerRef.current.scrollHeight;
-        // }
-        // console.log("scrolling");
     };
-
-    useEffect(() => {
-        // if (chatContainerRef.current) {
-        //     chatContainerRef.current.scrollTop =
-        //         chatContainerRef.current.scrollHeight;
-        // }
-        console.log("scrolling");
-    }, [socketStore.roomsMesages[roomName]]);
 
     if (!room || !roomsMesages[roomName])
         return (
@@ -59,6 +46,14 @@ export default function ChatRoom({ roomName }: Props) {
         );
 
     const messages = roomsMesages[roomName];
+
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+        }
+        console.log("scrolling");
+    }, [messages.length]);
 
     return (
         <>
@@ -75,7 +70,10 @@ export default function ChatRoom({ roomName }: Props) {
                     </button>
                 </div>
             </div>
-            <div className="flex flex-col bg-slate-100 px-2 h-[300px] w-full overflow-scroll">
+            <div
+                className="flex flex-col bg-slate-100 px-2 h-[300px] w-full overflow-scroll"
+                ref={chatContainerRef}
+            >
                 {messages.map((message, index) => (
                     <div key={index}>
                         <b className={``}>
