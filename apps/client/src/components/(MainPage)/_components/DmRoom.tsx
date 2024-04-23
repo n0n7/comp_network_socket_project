@@ -1,14 +1,11 @@
-import { useSocket } from "@/hooks/useSocket";
 import { useDmStore } from "@/stores/directMessageStore";
 import { useRoomStatusStore } from "@/stores/roomStatusStore";
 import { useSocketStore } from "@/stores/socketStore";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-type Props = {
-    roomName: string;
-};
+type Props = {};
 
-export default function ChatRoom({ roomName }: Props) {
+export default function DmRoom({}: Props) {
     const {
         rooms,
         clients,
@@ -17,69 +14,37 @@ export default function ChatRoom({ roomName }: Props) {
         setSelectedRoom,
         socket,
         roomsMesages,
+        privateMessage,
     } = useSocketStore();
-    const room = rooms[roomName];
+    const { setIsDm } = useRoomStatusStore();
+    const { clientId, clientName } = useDmStore();
     const chatContainerRef = useRef<HTMLDivElement>(null);
-    const { setIsGroup } = useRoomStatusStore();
 
-    const handleLeaveRoom = () => {
-        console.log(`Leaving room ${roomName}`);
-        socket!.emit("leave_room");
-        const roomNameList = joinedRoomList.filter((name) => name !== roomName);
-        setJoinedRoomList(roomNameList);
-        setSelectedRoom("");
+    const messages = privateMessage[clientId!];
+
+    const switchRoomHandler = () => {
+        setIsDm(false);
     };
 
     const [msg, setMsg] = useState("");
     const sendMessage = (text: string) => {
         socket!.emit("message", {
             message: text,
-            roomName: roomName,
+            clientIds: clientId,
         });
         setMsg("");
     };
 
-    const handleBack = () => {
-        setSelectedRoom("");
-        setIsGroup(false);
-    };
-
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
-        }
-        console.log("scrolling");
-    }, [roomsMesages[roomName].length]);
-
-    if (!room || !roomsMesages[roomName])
-        return (
-            <>
-                <div>ChatRoom Not Found</div>
-                <button onClick={handleLeaveRoom}>Leave</button>
-            </>
-        );
-
-    const messages = roomsMesages[roomName];
-
     return (
         <>
-            <div className="flex justify-between p-1 rounded-md bg-slate-400">
-                <div className="text-md font-semibold">
-                    ChatRoom {room.name} ({room.clientIds.length})
-                </div>
-                <div className="flex gap-1">
+            <div className="flex justify-between items-center w-full p-1 rounded-md bg-slate-400 px-2">
+                <div className="text-md font-semibold">{clientName}</div>
+                <div>
                     <button
                         className="border-2 border-gray-300 rounded-md p-1/2 bg-blue-600 text-white px-1"
-                        onClick={handleBack}
+                        onClick={switchRoomHandler}
                     >
                         Back
-                    </button>
-                    <button
-                        className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
-                        onClick={handleLeaveRoom}
-                    >
-                        Leave
                     </button>
                 </div>
             </div>
@@ -96,7 +61,7 @@ export default function ChatRoom({ roomName }: Props) {
                     </div>
                 ))}
             </div>
-            <div className="flex justify-between bg-slate-400 rounded-md gap-1 p-1">
+            <div className="flex justify-between bg-slate-400 rounded-md gap-1 p-1 mb-2">
                 <input
                     className="w-full rounded-md px-2"
                     placeholder="Type your message here"

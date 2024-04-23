@@ -1,3 +1,4 @@
+import { useRoomStatusStore } from "@/stores/roomStatusStore";
 import { useSocketStore } from "@/stores/socketStore";
 import React, { useState } from "react";
 
@@ -11,23 +12,25 @@ export default function CreateRoom({}: Props) {
         setSelectedRoom,
         roomsMesages,
         setRoomsMessages,
-    } = useSocketStore()
+    } = useSocketStore();
 
     const [roomNameInput, setRoomNameInput] = useState("");
+    const { setIsGroup } = useRoomStatusStore();
 
     const handleSubmit = () => {
         if (roomNameInput) {
-            socket!.emit("create_room", roomNameInput)
-            setJoinedRoomList([...joinedRoomList, roomNameInput])
-            setSelectedRoom(roomNameInput)
-            const roomMsgs = roomsMesages[roomNameInput]
+            socket!.emit("create_room", roomNameInput);
+            setJoinedRoomList([...joinedRoomList, roomNameInput]);
+            setSelectedRoom(roomNameInput);
+            const roomMsgs = roomsMesages[roomNameInput];
             if (!roomMsgs) {
                 setRoomsMessages({
                     ...roomsMesages,
                     [roomNameInput]: [],
-                })
+                });
             }
         }
+        setIsGroup(true);
     };
     return (
         <div>

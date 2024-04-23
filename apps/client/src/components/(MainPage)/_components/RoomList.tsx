@@ -1,3 +1,4 @@
+import { useRoomStatusStore } from "@/stores/roomStatusStore";
 import { useSocketStore } from "@/stores/socketStore";
 import { useState } from "react";
 
@@ -13,6 +14,7 @@ export default function RoomList() {
         setSelectedRoom,
     } = useSocketStore();
     const [showRooms, setShowRooms] = useState(true);
+    const { setIsDm, setIsGroup } = useRoomStatusStore();
 
     const handleJoinRoom = (roomName: string) => {
         console.log(`Joining room ${roomName}`);
@@ -38,7 +40,7 @@ export default function RoomList() {
 
                         return (
                             <div
-                                className="flex justify-between"
+                                className="flex justify-between items-center"
                                 key={room.name}
                             >
                                 <div>
@@ -54,6 +56,8 @@ export default function RoomList() {
                                                 if (!isJoined) {
                                                     handleJoinRoom(room.name);
                                                 }
+                                                setIsDm(false);
+                                                setIsGroup(true);
                                                 setSelectedRoom(room.name);
                                                 const roomMsgs =
                                                     roomsMesages[room.name];

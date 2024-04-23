@@ -1,13 +1,14 @@
 import { useSocketStore } from "@/stores/socketStore";
 import { useState } from "react";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
+import { useDmStore } from "@/stores/directMessageStore";
 
 type Props = {
-    roomName: string
-}
+    roomName: string;
+};
 
 export default function RoomInfo({ roomName }: Props) {
-    const { rooms, clients } = useSocketStore()
+    const { rooms, clients, nickname } = useSocketStore();
     const [showedInfo, setShowedInfo] = useState(true);
 
     const room = rooms[roomName];
@@ -43,9 +44,14 @@ export default function RoomInfo({ roomName }: Props) {
                         {clientInRoom.map((client) => {
                             if (!client) return <></>;
                             return (
-                                <div className="flex" key={client.id}>
-                                    <IoArrowForwardCircleOutline className="mr-2" />{" "}
-                                    {client.name}
+                                <div
+                                    className="flex justify-between"
+                                    key={client.id}
+                                >
+                                    <div className="flex">
+                                        <IoArrowForwardCircleOutline className="mr-2" />{" "}
+                                        {client.name}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -56,4 +62,7 @@ export default function RoomInfo({ roomName }: Props) {
             )}
         </div>
     );
+}
+function useDirectMessageStore(): { clientId: any; setClientId: any } {
+    throw new Error("Function not implemented.");
 }
