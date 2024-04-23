@@ -23,7 +23,6 @@ export default function ChatRoom({ roomName }: Props) {
     const { setIsGroup } = useRoomStatusStore()
 
     const handleLeaveRoom = () => {
-        console.log(`Leaving room ${roomName}`)
         socket!.emit("leave_room", roomName)
         const roomNameList = joinedRoomList.filter((name) => name !== roomName)
         setJoinedRoomList(roomNameList)
@@ -32,6 +31,7 @@ export default function ChatRoom({ roomName }: Props) {
 
     const [msg, setMsg] = useState("")
     const sendMessage = (text: string) => {
+        if (msg === "") return
         socket!.emit("message", {
             message: text,
             roomName: roomName,
@@ -51,7 +51,6 @@ export default function ChatRoom({ roomName }: Props) {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight
         }
-        console.log("scrolling")
     }, [msgLength])
 
     if (!room || !roomsMesages[roomName])

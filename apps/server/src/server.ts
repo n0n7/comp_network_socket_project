@@ -115,6 +115,7 @@ io.on("connection", (socket) => {
                     type: "public",
                     roomName: roomName,
                 })
+                socket.emit("clients", getClients())
             }
         }
     )
