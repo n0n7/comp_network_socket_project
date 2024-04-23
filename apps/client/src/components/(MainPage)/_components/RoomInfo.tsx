@@ -9,9 +9,8 @@ type Props = {
 };
 
 export default function RoomInfo({ roomName }: Props) {
-    const { socket, rooms, clients, nickname } = useSocketStore();
+    const { socket, rooms, clients } = useSocketStore();
     const [showedInfo, setShowedInfo] = useState(true);
-    const { setIsGroup } = useRoomStatusStore();
 
     const room = rooms[roomName];
     if (!room) return <></>;
@@ -60,7 +59,7 @@ export default function RoomInfo({ roomName }: Props) {
                                         {client.name}
                                     </div>
                                     <div>
-                                        {client.name !== nickname ? (
+                                        {client.id !== socket!.id ? (
                                             <button
                                                 className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
                                                 onClick={() =>

@@ -1,31 +1,31 @@
-import { useDmStore } from "@/stores/directMessageStore"
-import { useRoomStatusStore } from "@/stores/roomStatusStore"
-import { useSocketStore } from "@/stores/socketStore"
-import { useState } from "react"
-import { IoArrowForwardCircleOutline } from "react-icons/io5"
+import { useDmStore } from "@/stores/directMessageStore";
+import { useRoomStatusStore } from "@/stores/roomStatusStore";
+import { useSocketStore } from "@/stores/socketStore";
+import { useState } from "react";
+import { IoArrowForwardCircleOutline } from "react-icons/io5";
 
 export default function ClientList() {
     const {
+        socket,
         clients,
-        nickname,
         privateMessage,
         setPrivateMessage,
         setSelectedRoom,
-    } = useSocketStore()
-    const [showedClients, setShowedClients] = useState(true)
-    const { setClientId, setClientName } = useDmStore()
-    const { setIsDm, setIsGroup } = useRoomStatusStore()
+    } = useSocketStore();
+    const [showedClients, setShowedClients] = useState(true);
+    const { setClientId, setClientName } = useDmStore();
+    const { setIsDm, setIsGroup } = useRoomStatusStore();
 
     const selectDmHandler = (clientId: string, clientName: string) => {
-        setClientId(clientId)
-        setClientName(clientName)
+        setClientId(clientId);
+        setClientName(clientName);
         if (!privateMessage[clientId]) {
-            setPrivateMessage({ ...privateMessage, [clientId]: [] })
+            setPrivateMessage({ ...privateMessage, [clientId]: [] });
         }
-        setSelectedRoom("")
-        setIsDm(true)
-        setIsGroup(false)
-    }
+        setSelectedRoom("");
+        setIsDm(true);
+        setIsGroup(false);
+    };
 
     return (
         <div>
@@ -50,7 +50,7 @@ export default function ClientList() {
                                 {client.name}{" "}
                             </div>
                             <div>
-                                {client.name !== nickname ? (
+                                {client.id !== socket!.id ? (
                                     <button
                                         className="border-2 border-gray-300 rounded-md p-1/2 bg-green-700 text-white px-1"
                                         onClick={() =>
@@ -73,5 +73,5 @@ export default function ClientList() {
                 <></>
             )}
         </div>
-    )
+    );
 }
