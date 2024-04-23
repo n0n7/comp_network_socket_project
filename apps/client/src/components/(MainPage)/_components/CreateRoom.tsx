@@ -31,9 +31,9 @@ export default function CreateRoom({}: Props) {
     };
     return (
         <div>
-            <div className="align-center">
+            <div className="flex w-full">
                 <input
-                    className="border-2 border-gray-300 px-1 rounded-lg"
+                    className="border-2 border-gray-300 px-1 rounded-lg w-full"
                     type="text"
                     placeholder="Room name"
                     onChange={(e) => {
@@ -41,7 +41,7 @@ export default function CreateRoom({}: Props) {
                     }}
                 />
                 <button
-                    className="border-2 border-gray-300 rounded-md p-1/2 ml-2 bg-blue-600 text-white px-1"
+                    className="border-2 border-gray-300 rounded-md p-1/2 bg-blue-600 text-white px-1"
                     onClick={handleSubmit}
                 >
                     Create

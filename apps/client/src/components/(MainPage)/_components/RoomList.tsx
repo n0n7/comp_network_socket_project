@@ -1,4 +1,4 @@
-import { useSocketStore } from "@/stores/socketStore"
+import { useSocketStore } from "@/stores/socketStore";
 
 export default function RoomList() {
     const {
@@ -10,20 +10,20 @@ export default function RoomList() {
         setRoomsMessages,
         setJoinedRoomList,
         setSelectedRoom,
-    } = useSocketStore()
+    } = useSocketStore();
 
     const handleJoinRoom = (roomName: string) => {
-        console.log(`Joining room ${roomName}`)
-        socket!.emit("join_room", roomName)
-        setJoinedRoomList([...joinedRoomList, roomName])
-    }
+        console.log(`Joining room ${roomName}`);
+        socket!.emit("join_room", roomName);
+        setJoinedRoomList([...joinedRoomList, roomName]);
+    };
 
     return (
         <div>
             <h2 className="text-lg font-medium">Public chat</h2>
             <ul>
                 {Object.values(rooms).map((room) => {
-                    const isJoined = joinedRoomList.includes(room.name)
+                    const isJoined = joinedRoomList.includes(room.name);
 
                     return (
                         <div className="flex justify-between" key={room.name}>
@@ -38,16 +38,16 @@ export default function RoomList() {
                                         className="border-2 border-gray-300 rounded-md p-1/2 bg-gray-600 text-white px-1"
                                         onClick={() => {
                                             if (!isJoined) {
-                                                handleJoinRoom(room.name)
+                                                handleJoinRoom(room.name);
                                             }
-                                            setSelectedRoom(room.name)
+                                            setSelectedRoom(room.name);
                                             const roomMsgs =
-                                                roomsMesages[room.name]
+                                                roomsMesages[room.name];
                                             if (!roomMsgs) {
                                                 setRoomsMessages({
                                                     ...roomsMesages,
                                                     [room.name]: [],
-                                                })
+                                                });
                                             }
                                         }}
                                     >
@@ -56,9 +56,9 @@ export default function RoomList() {
                                 )}
                             </div>
                         </div>
-                    )
+                    );
                 })}
             </ul>
         </div>
-    )
+    );
 }

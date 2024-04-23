@@ -47,7 +47,7 @@ export default function ChatRoom({ roomName }: Props) {
 
     return (
         <>
-            <div className="flex justify-between">
+            <div className="flex justify-between w-full p-1 rounded-md bg-slate-400">
                 <div className="text-md font-semibold">
                     ChatRoom {room.name} ({room.clientIds.length})
                 </div>
@@ -60,15 +60,17 @@ export default function ChatRoom({ roomName }: Props) {
                     </button>
                 </div>
             </div>
-            <div className="bg-slate-100 px-2 mb-2">
+            <div className="bg-slate-100 px-2 h-[300px] w-full overflow-scroll">
                 {messages.map((message, index) => (
                     <div key={index}>
-                        <b>{clients[message.senderId]?.name ?? "unknown"}</b>:{" "}
-                        {message.message}
+                        <b className={``}>
+                            {clients[message.senderId]?.name ?? "unknown"}
+                        </b>
+                        : {message.message}
                     </div>
                 ))}
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between bg-slate-400 rounded-md gap-1 p-1">
                 <input
                     className="w-full rounded-md px-2"
                     placeholder="Type your message here"
