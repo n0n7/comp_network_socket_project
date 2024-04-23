@@ -25,7 +25,7 @@ interface Client {
     id: string
     name: string
     socket: Socket
-    roomName?: string
+    roomNames?: string[]
 }
 
 interface Message {
@@ -47,8 +47,8 @@ function getClients() {
     // return client object but remove the socket in every client
     const clientData: { [clientId: string]: Omit<Client, "socket"> } = {}
     for (const clientId in clients) {
-        const { id, name, roomName } = clients[clientId]
-        clientData[clientId] = { id, name, roomName }
+        const { id, name, roomNames } = clients[clientId]
+        clientData[clientId] = { id, name, roomNames }
     }
     return clientData
 }
@@ -102,7 +102,10 @@ io.on("connection", (socket) => {
 
         socket.join(roomName)
 
-        clients[socket.id].roomName = roomName
+        if (!clients[socket.id].roomNames) {
+            clients[socket.id].roomNames = []
+        }
+        clients[socket.id].roomNames?.push(roomName)
 
         // TODO: emit to all clients
         io.emit("rooms", rooms)
@@ -118,7 +121,10 @@ io.on("connection", (socket) => {
             // Join the room
             socket.join(roomName)
             // Update the client's room property
-            clients[socket.id].roomName = roomName
+            if (!clients[socket.id].roomNames) {
+                clients[socket.id].roomNames = []
+            }
+            clients[socket.id].roomNames?.push(roomName)
             // update room's clientIds
             room.clientIds.push(socket.id)
             // Send a confirmation message to all client in room
@@ -132,13 +138,14 @@ io.on("connection", (socket) => {
         }
     })
 
-    socket.on("leave_room", () => {
+    socket.on("leave_room", (roomName: string) => {
         const client = clients[socket.id]
-        if (client.roomName) {
-            const roomName = client.roomName
+        if (client.roomNames?.includes(roomName)) {
             socket.leave(roomName!) // Leave the room
-            // Clear the client's room property
-            client.roomName = undefined
+            // remove room the client's room property
+            client.roomNames = client.roomNames?.filter(
+                (name) => name !== roomName
+            )
             // Remove the client from the room's clientIds
             const room = rooms[roomName!]
             const clientIndexInRoom = room.clientIds.indexOf(socket.id)
@@ -156,51 +163,56 @@ io.on("connection", (socket) => {
         }
     })
 
-    socket.on("kick", (clientId: string) => {
-        const client = clients[socket.id]
-        const kickedClient = clients[clientId]
-        if (client && kickedClient) {
-            const roomName = client.roomName
-            const kickedClientRoomName = kickedClient.roomName
-            if (roomName && roomName === kickedClientRoomName) {
-                const room = rooms[roomName]
-                const clientIndexInRoom = room.clientIds.indexOf(clientId)
-                if (clientIndexInRoom !== -1) {
-                    room.clientIds.splice(clientIndexInRoom, 1)
-                    kickedClient.roomName == undefined
-                    io.to(clientId).emit("kicked", {
-                        roomName: roomName,
-                    })
-                    kickedClient.socket.leave(roomName)
+    socket.on(
+        "kick",
+        ({ clientId, roomName }: { clientId: string; roomName: string }) => {
+            const client = clients[socket.id]
+            const kickedClient = clients[clientId]
+            if (client && kickedClient) {
+                if (
+                    client.roomNames?.includes(roomName) &&
+                    kickedClient.roomNames?.includes(roomName)
+                ) {
+                    const room = rooms[roomName]
+                    const clientIndexInRoom = room.clientIds.indexOf(clientId)
+                    if (clientIndexInRoom !== -1) {
+                        room.clientIds.splice(clientIndexInRoom, 1)
+                        kickedClient.roomNames = kickedClient.roomNames?.filter(
+                            (name) => name !== roomName
+                        )
+                        io.to(clientId).emit("kicked", {
+                            roomName: roomName,
+                        })
+                        kickedClient.socket.leave(roomName)
 
-                    io.to(roomName).emit("broadcast", {
-                        message: `${kickedClient.name} has been kicked from the room`,
-                        roomName: roomName,
-                    })
+                        io.to(roomName).emit("broadcast", {
+                            message: `${kickedClient.name} has been kicked from the room`,
+                            roomName: roomName,
+                        })
 
-                    io.emit("rooms", rooms)
-                    io.emit("clients", getClients())
+                        io.emit("rooms", rooms)
+                        io.emit("clients", getClients())
+                    }
                 }
             }
         }
-    })
+    )
 
     socket.on("disconnect", () => {
         console.log(`User ${socket.id} disconnected`)
         const disconnectedClient = clients[socket.id]
         delete clients[socket.id]
-        const roomName = disconnectedClient.roomName
-        if (roomName) {
-            socket.leave(roomName)
-            const room = rooms[roomName]
-            const clientIndexInRoom = room.clientIds.indexOf(socket.id)
-            if (clientIndexInRoom !== -1) {
-                room.clientIds.splice(clientIndexInRoom, 1)
-            }
-
-            io.to(roomName).emit("broadcast", {
-                message: `${disconnectedClient.name} has left the room`,
-                roomName: roomName,
+        const roomNames = disconnectedClient.roomNames
+        if (roomNames && roomNames.length > 0) {
+            roomNames.forEach((roomName) => {
+                socket.leave(roomName)
+                io.to(roomName).emit("broadcast", {
+                    message: `${disconnectedClient.name} has left the room`,
+                    roomName: roomName,
+                })
+                rooms[roomName].clientIds = rooms[roomName].clientIds.filter(
+                    (id) => id !== socket.id
+                )
             })
         }
         io.emit("clients", getClients())
