@@ -31,29 +31,29 @@ export const useSocket = () => {
             });
 
             socket.on("error", (error: string) => {
-                alert(error)
-            })
+                alert(error);
+            });
 
             socket.on("message", (message: Message) => {
-                console.log("Message received", message)
+                console.log("Message received", message);
                 if (message.type === "private") {
-                    const privateMsgs = socketStore.privateMessage
+                    const privateMsgs = socketStore.privateMessage;
                     if (!privateMsgs[message.senderId]) {
-                        privateMsgs[message.senderId] = []
+                        privateMsgs[message.senderId] = [];
                     }
-                    privateMsgs[message.senderId].push(message)
-                    socketStore.setPrivateMessage(privateMsgs)
+                    privateMsgs[message.senderId].push(message);
+                    socketStore.setPrivateMessage(privateMsgs);
                 }
                 if (message.type === "public") {
-                    const roomMsgs = socketStore.roomsMesages
+                    const roomMsgs = socketStore.roomsMesages;
                     if (!roomMsgs[message.roomName!]) {
-                        roomMsgs[message.roomName!] = []
+                        roomMsgs[message.roomName!] = [];
                     }
-                    roomMsgs[message.roomName!].push(message)
+                    roomMsgs[message.roomName!].push(message);
 
-                    socketStore.setRoomsMessages(roomMsgs)
+                    socketStore.setRoomsMessages(roomMsgs);
                 }
-            })
+            });
 
             socket.on(
                 "broadcast",
@@ -63,12 +63,12 @@ export const useSocket = () => {
             );
 
             socket.on("kicked", ({ roomName }: { roomName: string }) => {
-                alert("You have been kicked from the room")
+                alert("You have been kicked from the room");
                 const roomNameList = socketStore.joinedRoomList.filter(
                     (name) => name !== roomName
-                )
-                socketStore.setJoinedRoomList(roomNameList)
-            })
+                );
+                socketStore.setJoinedRoomList(roomNameList);
+            });
 
             socket.on("error", (error: string) => {
                 alert(error);

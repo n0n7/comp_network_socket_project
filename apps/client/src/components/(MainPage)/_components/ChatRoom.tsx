@@ -1,10 +1,10 @@
-import { useSocket } from "@/hooks/useSocket"
-import { useSocketStore } from "@/stores/socketStore"
-import React, { useState } from "react"
+import { useSocket } from "@/hooks/useSocket";
+import { useSocketStore } from "@/stores/socketStore";
+import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
-    roomName: string
-}
+    roomName: string;
+};
 
 export default function ChatRoom({ roomName }: Props) {
     const {
@@ -15,25 +15,40 @@ export default function ChatRoom({ roomName }: Props) {
         setSelectedRoom,
         socket,
         roomsMesages,
-    } = useSocketStore()
-    const room = rooms[roomName]
+    } = useSocketStore();
+    const socketStore = useSocketStore();
+    const room = rooms[roomName];
+    const [chatContainerRef, setChatContainer] = useState<HTMLDivElement>();
 
     const handleLeaveRoom = () => {
-        console.log(`Leaving room ${roomName}`)
-        socket!.emit("leave_room")
-        const roomNameList = joinedRoomList.filter((name) => name !== roomName)
-        setJoinedRoomList(roomNameList)
-        setSelectedRoom("")
-    }
+        console.log(`Leaving room ${roomName}`);
+        socket!.emit("leave_room");
+        const roomNameList = joinedRoomList.filter((name) => name !== roomName);
+        setJoinedRoomList(roomNameList);
+        setSelectedRoom("");
+    };
 
-    const [msg, setMsg] = useState("")
+    const [msg, setMsg] = useState("");
     const sendMessage = (text: string) => {
         socket!.emit("message", {
             message: text,
             roomName: roomName,
-        })
-        setMsg("")
-    }
+        });
+        setMsg("");
+        // if (chatContainerRef.current) {
+        //     chatContainerRef.current.scrollTop =
+        //         chatContainerRef.current.scrollHeight;
+        // }
+        // console.log("scrolling");
+    };
+
+    useEffect(() => {
+        // if (chatContainerRef.current) {
+        //     chatContainerRef.current.scrollTop =
+        //         chatContainerRef.current.scrollHeight;
+        // }
+        console.log("scrolling");
+    }, [socketStore.roomsMesages[roomName]]);
 
     if (!room || !roomsMesages[roomName])
         return (
@@ -41,9 +56,9 @@ export default function ChatRoom({ roomName }: Props) {
                 <div>ChatRoom Not Found</div>
                 <button onClick={handleLeaveRoom}>Leave</button>
             </>
-        )
+        );
 
-    const messages = roomsMesages[roomName]
+    const messages = roomsMesages[roomName];
 
     return (
         <>
@@ -60,7 +75,7 @@ export default function ChatRoom({ roomName }: Props) {
                     </button>
                 </div>
             </div>
-            <div className="bg-slate-100 px-2 h-[300px] w-full overflow-scroll">
+            <div className="flex flex-col bg-slate-100 px-2 h-[300px] w-full overflow-scroll">
                 {messages.map((message, index) => (
                     <div key={index}>
                         <b className={``}>
@@ -76,7 +91,7 @@ export default function ChatRoom({ roomName }: Props) {
                     placeholder="Type your message here"
                     type="text"
                     onChange={(e) => {
-                        setMsg(e.target.value)
+                        setMsg(e.target.value);
                     }}
                     value={msg}
                 />
@@ -88,5 +103,5 @@ export default function ChatRoom({ roomName }: Props) {
                 </button>
             </div>
         </>
-    )
+    );
 }
