@@ -1,8 +1,8 @@
-import { useDmStore } from "@/stores/directMessageStore";
-import { useRoomStatusStore } from "@/stores/roomStatusStore";
-import { useSocketStore } from "@/stores/socketStore";
-import { useState } from "react";
-import { IoArrowForwardCircleOutline } from "react-icons/io5";
+import { useDmStore } from "@/stores/directMessageStore"
+import { useRoomStatusStore } from "@/stores/roomStatusStore"
+import { useSocketStore } from "@/stores/socketStore"
+import { useState } from "react"
+import { IoArrowForwardCircleOutline } from "react-icons/io5"
 
 export default function ClientList() {
     const {
@@ -11,21 +11,21 @@ export default function ClientList() {
         privateMessage,
         setPrivateMessage,
         setSelectedRoom,
-    } = useSocketStore();
-    const [showedClients, setShowedClients] = useState(true);
-    const { setClientId, setClientName } = useDmStore();
-    const { setIsDm, setIsGroup } = useRoomStatusStore();
+    } = useSocketStore()
+    const [showedClients, setShowedClients] = useState(true)
+    const { setClientId, setClientName } = useDmStore()
+    const { setIsDm, setIsGroup } = useRoomStatusStore()
 
     const selectDmHandler = (clientId: string, clientName: string) => {
-        setClientId(clientId);
-        setClientName(clientName);
+        setClientId(clientId)
+        setClientName(clientName)
         if (!privateMessage[clientId]) {
-            setPrivateMessage({ ...privateMessage, [clientId]: [] });
+            setPrivateMessage({ ...privateMessage, [clientId]: [] })
         }
-        setSelectedRoom("");
-        setIsDm(true);
-        setIsGroup(false);
-    };
+        setSelectedRoom("")
+        setIsDm(true)
+        setIsGroup(false)
+    }
 
     return (
         <div>
@@ -41,8 +41,11 @@ export default function ClientList() {
             {showedClients ? (
                 <ul>
                     {Object.values(clients).map((client) => (
-                        <div className="flex justify-between my-1">
-                            <div className="flex items-center" key={client.id}>
+                        <div
+                            key={client.id}
+                            className="flex justify-between my-1"
+                        >
+                            <div className="flex items-center">
                                 <IoArrowForwardCircleOutline className="mr-2" />
                                 {client.name}{" "}
                             </div>
@@ -70,5 +73,5 @@ export default function ClientList() {
                 <></>
             )}
         </div>
-    );
+    )
 }

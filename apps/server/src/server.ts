@@ -35,6 +35,7 @@ interface Message {
     message: string
     type: "public" | "private"
     roomName?: string
+    timestamp: number
 }
 
 interface ChatRoom {
@@ -44,6 +45,7 @@ interface ChatRoom {
 
 const clients: { [clientId: string]: Client } = {}
 const rooms: { [roomName: string]: ChatRoom } = {}
+const publicMessages: { [roomName: string]: Message[] } = {}
 
 function getClients() {
     // return client object but remove the socket in every client
@@ -85,6 +87,12 @@ io.on("connection", (socket) => {
             socket.emit("rooms", rooms)
         }
     )
+
+    socket.on("edit_name", (name: string) => {
+        const client = clients[socket.id]
+        client.name = name
+        io.emit("clients", getClients())
+    })
 
     socket.on(
         "message",
@@ -203,6 +211,8 @@ io.on("connection", (socket) => {
                         message: `${kickedClient.name} has been kicked from the room`,
                         roomName: roomName,
                     })
+
+                    // TODO: update client to backend
 
                     io.emit("rooms", rooms)
                     io.emit("clients", getClients())
