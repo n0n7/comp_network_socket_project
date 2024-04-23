@@ -2,8 +2,8 @@
 import express, { Request, Response } from "express"
 import { Server, Socket } from "socket.io"
 import cors from "cors"
-import http from "http"
-import { signin, signup } from "./auth"
+import http, { get } from "http"
+import { getUser, signin, signup } from "./auth"
 
 const app = express()
 const server = http.createServer(app)
@@ -23,9 +23,11 @@ app.use("/auth", auth)
 
 interface Client {
     id: string
+    uid: string
     name: string
     socket: Socket
     roomNames?: string[]
+    experience?: number
 }
 
 interface Message {
@@ -47,8 +49,8 @@ function getClients() {
     // return client object but remove the socket in every client
     const clientData: { [clientId: string]: Omit<Client, "socket"> } = {}
     for (const clientId in clients) {
-        const { id, name, roomNames } = clients[clientId]
-        clientData[clientId] = { id, name, roomNames }
+        const { id, name, roomNames, uid, experience } = clients[clientId]
+        clientData[clientId] = { uid, id, name, roomNames, experience }
     }
     return clientData
 }
@@ -62,14 +64,27 @@ function leaveRoom(clientId: string, roomName: string) {
     }
 }
 
+const testUid = ""
+
 io.on("connection", (socket) => {
     console.log(`A user ${socket.id} connected`)
 
-    socket.on("set_name", (name: string) => {
-        clients[socket.id] = { id: socket.id, name, socket }
-        io.emit("clients", getClients())
-        socket.emit("rooms", rooms)
-    })
+    socket.on(
+        "set_name",
+        async ({ name, uid = testUid }: { name: string; uid?: string }) => {
+            const userData = await getUser(uid)
+            clients[socket.id] = {
+                id: socket.id,
+                name,
+                socket,
+                uid,
+                experience: userData.experience,
+            }
+
+            io.emit("clients", getClients())
+            socket.emit("rooms", rooms)
+        }
+    )
 
     socket.on(
         "message",
@@ -82,8 +97,6 @@ io.on("connection", (socket) => {
             clientIds?: string
             roomName?: string
         }) => {
-            const sender = clients[socket.id]
-
             if (clientIds) {
                 if (!clients[clientIds]) {
                     socket.emit("error", "Client does not exist")
@@ -95,6 +108,7 @@ io.on("connection", (socket) => {
                     type: "private",
                 })
             } else {
+                clients[socket.id].experience! += 1
                 io.to(roomName!).emit("message", {
                     senderId: socket.id,
                     message,

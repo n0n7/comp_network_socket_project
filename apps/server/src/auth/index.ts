@@ -2,6 +2,13 @@ import { Request, Response } from "express"
 import { collection, query, where, getDocs, addDoc } from "firebase/firestore"
 import { db } from "../firebase/firebaseconfig"
 
+interface User {
+    email: string
+    username: string
+    experience: number
+    password: string
+}
+
 interface SignUpRequestBody {
     email: string
     username: string
@@ -33,7 +40,7 @@ export async function signup(
         await addDoc(usersRef, {
             username,
             email,
-            level: 0,
+            experience: 0,
             password, // Note: Storing passwords in plaintext is not recommended in production
         })
 
@@ -97,4 +104,18 @@ export async function signin(
         console.error(error)
         res.status(500).json({ error: "Internal server error" })
     }
+}
+
+export async function getUser(uid: string): Promise<User> {
+    if (uid === "") {
+        return {
+            email: "",
+            username: "",
+            experience: 0,
+            password: "",
+        }
+    }
+    const usersRef = collection(db, "users")
+    const user = await getDocs(query(usersRef, where("uid", "==", uid)))
+    return user.docs[0].data() as User
 }
