@@ -1,7 +1,7 @@
 import { useDmStore } from "@/stores/directMessageStore";
 import { useRoomStatusStore } from "@/stores/roomStatusStore";
 import { useSocketStore } from "@/stores/socketStore";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Props = {};
 
@@ -21,6 +21,14 @@ export default function DmRoom({}: Props) {
     const chatContainerRef = useRef<HTMLDivElement>(null);
 
     const messages = privateMessage[clientId!];
+
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+                chatContainerRef.current.scrollHeight;
+        }
+        console.log("scrolling");
+    }, [privateMessage[clientId!].length]);
 
     const switchRoomHandler = () => {
         setIsDm(false);
