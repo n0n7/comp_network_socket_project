@@ -3,8 +3,10 @@ import { create } from "zustand"
 
 export type Client = {
     id: string
+    uid: string
     name: string
     roomName?: string
+    experience: number
 }
 
 export type ClientsData = { [clientId: string]: Client }

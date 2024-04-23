@@ -14,7 +14,7 @@ export default function Home() {
 
     const router = useRouter();
 
-    const { nickname, setNickname, reset } = useSocketStore();
+    const { nickname, setNickname, reset, clients, socket } = useSocketStore();
 
     useSocket();
 
@@ -34,6 +34,9 @@ export default function Home() {
             </div>
         );
     }
+
+    const client = clients[socket?.id!]
+
     return (
         <div className="flex flex-col items-center justify-center">
             <div className="w-[30%] bg-slate-200 p-2">
@@ -42,7 +45,7 @@ export default function Home() {
                         <h1 className="text-3xl font-bold">Home</h1>
                         <p>
                             Welcome,{" "}
-                            <span className="font-semibold">{nickname}</span>
+                            <span className="font-semibold">{nickname} level:({client?.experience})</span>
                         </p>
                     </div>
                     <div>

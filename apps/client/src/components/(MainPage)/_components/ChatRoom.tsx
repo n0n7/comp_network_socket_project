@@ -32,6 +32,7 @@ export default function ChatRoom({ roomName }: Props) {
 
     const [msg, setMsg] = useState("")
     const sendMessage = (text: string) => {
+        if (msg === "") return
         socket!.emit("message", {
             message: text,
             roomName: roomName,
