@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 export default function Home() {
+    console.log("Home");
     const { user, isLoggedIn, login, logout } = useUser();
 
     const router = useRouter();

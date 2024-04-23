@@ -21,9 +21,7 @@ export default function SignInPage() {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
         try {
             await login(formData);
             router.push("/");
@@ -36,42 +34,40 @@ export default function SignInPage() {
             <div className="w-[30%] h-full bg-slate-200 p-2">
                 <div>
                     <h1 className="text-xl font-bold mb-2">Sign In</h1>
-                    <form onSubmit={handleSubmit}>
-                        <div className="flex justify-between">
-                            <label className="font-semibold">Email</label>
-                            <input
-                                className="border-2 border-gray-400 rounded-md px-1"
-                                type="text"
-                                name="email"
-                                placeholder="Email"
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex  justify-between mb-2">
-                            <label className="font-semibold">Password</label>
-                            <input
-                                className="border-2 border-gray-400 rounded-md px-1"
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div className="flex justify-end gap-2">
-                            <button
-                                className="border-2 border-gray-400 rounded-md p-1/2 bg-gray-600 text-white px-1"
-                                type="submit"
-                            >
-                                Sign In
-                            </button>
-                            <button
-                                className="border-2 border-gray-400 rounded-md p-1/2 bg-gray-600 text-white px-1"
-                                onClick={() => router.push("/signup")}
-                            >
-                                Sign Up
-                            </button>
-                        </div>
-                    </form>
+                    <div className="flex justify-between">
+                        <label className="font-semibold">Email</label>
+                        <input
+                            className="border-2 border-gray-400 rounded-md px-1"
+                            type="text"
+                            name="email"
+                            placeholder="Email"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex  justify-between mb-2">
+                        <label className="font-semibold">Password</label>
+                        <input
+                            className="border-2 border-gray-400 rounded-md px-1"
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                        <button
+                            className="border-2 border-gray-400 rounded-md p-1/2 bg-gray-600 text-white px-1"
+                            onClick={handleSubmit}
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            className="border-2 border-gray-400 rounded-md p-1/2 bg-gray-600 text-white px-1"
+                            onClick={() => router.push("/signup")}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
