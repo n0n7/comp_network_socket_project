@@ -21,7 +21,6 @@ export default function DmRoom({}: Props) {
             chatContainerRef.current.scrollTop =
                 chatContainerRef.current.scrollHeight
         }
-        console.log("scrolling")
     }, [msgLength])
 
     const switchRoomHandler = () => {
