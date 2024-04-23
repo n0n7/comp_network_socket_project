@@ -14,21 +14,7 @@ export const useSocket = () => {
 
     useEffect(() => {
         if (socketStore.nickname) {
-            const socket = io("http://localhost:3001");
-
-            socket.on("connect", () => {
-                console.log("Socket connected");
-                socket.emit("set_name", socketStore.nickname);
-            });
-
-            socket.on("clients", (clients: ClientsData) => {
-                socketStore.setClients(clients);
-            });
-
-            socket.on("rooms", (rooms: RoomsData) => {
-                console.log(rooms);
-                socketStore.setRooms(rooms);
-            });
+            const socket = io(process.env.NEXT_PUBLIC_API || "");
 
             socket.on("error", (error: string) => {
                 alert(error);
