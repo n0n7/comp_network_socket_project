@@ -1,40 +1,46 @@
-"use client";
+"use client"
 
-import MainPage from "@/components/(MainPage)/MainPage";
-import JoinServerPage from "@/components/JoinServerPage";
-import { useSocket } from "@/hooks/useSocket";
-import { useUser } from "@/hooks/useUser";
-import { useSocketStore } from "@/stores/socketStore";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import MainPage from "@/components/(MainPage)/MainPage"
+import JoinServerPage from "@/components/JoinServerPage"
+import { useSocket } from "@/hooks/useSocket"
+import { useUser } from "@/hooks/useUser"
+import { useSocketStore } from "@/stores/socketStore"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import io from "socket.io-client"
 
 export default function Home() {
-    console.log("Home");
-    const { user, isLoggedIn, login, logout } = useUser();
+    const { user, isLoggedIn, login, logout } = useUser()
 
-    const router = useRouter();
+    const router = useRouter()
 
-    const { nickname, setNickname, reset, clients, socket } = useSocketStore();
-    
+    const { nickname, setNickname, reset, clients, socket } = useSocketStore()
 
-    useSocket();
+    const [newName, setNewName] = useState(nickname)
+
+    const handleChangeName = () => {
+        if (newName) {
+            setNickname(newName)
+            socket?.emit("edit_name", newName)
+        }
+    }
+
+    useSocket()
 
     useEffect(() => {
         if (!isLoggedIn) {
-            reset();
-            router.push("/signin");
-        }
-        else {
+            reset()
+            router.push("/signin")
+        } else {
             setNickname(user?.username!)
         }
-    }, [isLoggedIn, router, reset]);
+    }, [isLoggedIn, router, reset])
 
     if (!nickname) {
-        return <div></div>;
+        return <div></div>
     }
 
-    const client = clients[socket?.id!];
+    const client = clients[socket?.id!]
 
     return (
         <div className="flex flex-col items-center justify-center">
@@ -45,9 +51,16 @@ export default function Home() {
                         <p>
                             Welcome,{" "}
                             <span className="font-semibold">
-                                {nickname} level:({client?.experience})
+                                {nickname} level: {client?.experience}
                             </span>
                         </p>
+                        <input
+                            value={newName}
+                            onChange={(e) => setNewName(e.target.value)}
+                        />
+                        <button className="border-2 border-gray-300 rounded-md p-1/2 bg-blue-600 text-white px-1" onClick={handleChangeName}>
+                            change name
+                        </button>
                     </div>
                     <div>
                         <button
@@ -64,5 +77,5 @@ export default function Home() {
                 </div>
             </div>
         </div>
-    );
+    )
 }
