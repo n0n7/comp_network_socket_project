@@ -16,6 +16,8 @@ export type Message = {
     message: string
     type: string
     roomName?: string
+    broadcastType?: "join" | "leave" | "kick"
+    timestamp?: number
 }
 
 export type MessageData = { [key: string]: Message[] }

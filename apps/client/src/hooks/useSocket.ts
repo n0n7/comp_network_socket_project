@@ -24,10 +24,9 @@ export const useSocket = () => {
                 socket.emit("set_name", { name: socketStore.nickname, uid: userStore.user?.uid }) // TODO:change uid when it's ready
             })
 
-            socket.on("clients", (clients: ClientsData) => {
-                console.log(clients)
-                socketStore.setClients(clients)
-            })
+			socket.on("clients", (clients: ClientsData) => {
+				socketStore.setClients(clients);
+			});
 
             socket.on("rooms", (rooms: RoomsData) => {
                 console.log(rooms)
@@ -59,12 +58,30 @@ export const useSocket = () => {
                 }
             })
 
-            socket.on(
-                "broadcast",
-                (message: { message: string; roomName: string }) => {
-                    // TODO: broadcast message
-                }
-            )
+			socket.on(
+				"broadcast",
+				(broadcastMessage: {
+					message: string;
+					roomName: string;
+					type: "join" | "leave" | "kick";
+					timestamp: number;
+				}) => {
+					// Add some logic to handle broadcast messages
+					const roomsMessage = socketStore.roomsMesages;
+					if (!roomsMessage[broadcastMessage.roomName]) {
+						roomsMessage[broadcastMessage.roomName] = [];
+					}
+					roomsMessage[broadcastMessage.roomName].push({
+                        senderId: "",
+						message: broadcastMessage.message,
+                        type: "",
+						broadcastType: broadcastMessage.type,
+						timestamp: broadcastMessage.timestamp,
+					});
+
+                    socketStore.setRoomsMessages(roomsMessage);
+				}
+			);
 
             socket.on("kicked", ({ roomName }: { roomName: string }) => {
                 alert("You have been kicked from the room")

@@ -69,11 +69,6 @@ interface SignInRequestBody {
     password: string
 }
 
-interface SignInRequestBody {
-    email: string
-    password: string
-}
-
 export async function signin(
     req: Request<{}, {}, SignInRequestBody>,
     res: Response

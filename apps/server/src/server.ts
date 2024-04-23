@@ -168,6 +168,8 @@ io.on("connection", (socket) => {
             io.to(roomName).emit("broadcast", {
                 message: `${clients[socket.id].name} has joined the room`,
                 roomName: roomName,
+                type: "join",
+                timestamp: Math.floor(Date.now() / 1000),
             })
 
             io.emit("rooms", rooms)
@@ -185,6 +187,8 @@ io.on("connection", (socket) => {
             io.to(roomName).emit("broadcast", {
                 message: `${clients[socket.id].name} has left the room`,
                 roomName: roomName,
+                type: "leave",
+                timestamp: Math.floor(Date.now() / 1000),
             })
 
             io.emit("rooms", rooms)
@@ -211,6 +215,8 @@ io.on("connection", (socket) => {
                     io.to(roomName).emit("broadcast", {
                         message: `${kickedClient.name} has been kicked from the room`,
                         roomName: roomName,
+                        type: "kick",
+                        timestamp: Math.floor(Date.now() / 1000),
                     })
 
                     // TODO: update client to backend
