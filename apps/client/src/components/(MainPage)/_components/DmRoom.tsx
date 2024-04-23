@@ -1,47 +1,47 @@
-import { useDmStore } from "@/stores/directMessageStore";
-import { useRoomStatusStore } from "@/stores/roomStatusStore";
-import { useSocketStore } from "@/stores/socketStore";
-import React, { useEffect, useRef, useState } from "react";
+import { useDmStore } from "@/stores/directMessageStore"
+import { useRoomStatusStore } from "@/stores/roomStatusStore"
+import { useSocketStore } from "@/stores/socketStore"
+import React, { useEffect, useRef, useState } from "react"
 
-type Props = {};
+type Props = {}
 
 export default function DmRoom({}: Props) {
-    const {
-        rooms,
-        clients,
-        joinedRoomList,
-        setJoinedRoomList,
-        setSelectedRoom,
-        socket,
-        roomsMesages,
-        privateMessage,
-    } = useSocketStore();
-    const { setIsDm } = useRoomStatusStore();
-    const { clientId, clientName } = useDmStore();
-    const chatContainerRef = useRef<HTMLDivElement>(null);
+    const { clients, socket, privateMessage, setPrivateMessage } =
+        useSocketStore()
+    const { setIsDm } = useRoomStatusStore()
+    const { clientId, clientName } = useDmStore()
+    const chatContainerRef = useRef<HTMLDivElement>(null)
 
-    const messages = privateMessage[clientId!];
+    const messages = privateMessage[clientId!]
+
+    const msgLength = privateMessage[clientId!]?.length ?? 0
 
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight;
+                chatContainerRef.current.scrollHeight
         }
-        console.log("scrolling");
-    }, [privateMessage[clientId!].length]);
+        console.log("scrolling")
+    }, [msgLength])
 
     const switchRoomHandler = () => {
-        setIsDm(false);
-    };
+        setIsDm(false)
+    }
 
-    const [msg, setMsg] = useState("");
+    const [msg, setMsg] = useState("")
     const sendMessage = (text: string) => {
         socket!.emit("message", {
             message: text,
             clientIds: clientId,
-        });
-        setMsg("");
-    };
+        })
+
+        privateMessage[clientId!].push({
+            senderId: socket!.id ?? "",
+            message: text,
+            type: "private",
+        })
+        setMsg("")
+    }
 
     return (
         <>
@@ -75,7 +75,7 @@ export default function DmRoom({}: Props) {
                     placeholder="Type your message here"
                     type="text"
                     onChange={(e) => {
-                        setMsg(e.target.value);
+                        setMsg(e.target.value)
                     }}
                     value={msg}
                 />
@@ -87,5 +87,5 @@ export default function DmRoom({}: Props) {
                 </button>
             </div>
         </>
-    );
+    )
 }
