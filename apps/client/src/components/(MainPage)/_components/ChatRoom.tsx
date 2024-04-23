@@ -117,7 +117,7 @@ export default function ChatRoom({ roomName }: Props) {
 							)
 						) : (
 							<div className="w-full break-words">
-								<span className="cursor-pointer" onClick={() => deleteHandler(index)}>🗑️</span>
+								<span className="cursor-pointer" onClick={() => deleteHandler(index)} title="delete message">🗑️</span>
 								<b>
 									{clients[message.senderId]?.name ??
 										"unknown"}
