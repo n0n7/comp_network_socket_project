@@ -3,6 +3,7 @@ import { useDmStore } from "@/stores/directMessageStore";
 import { useRoomStatusStore } from "@/stores/roomStatusStore";
 import { useSocketStore } from "@/stores/socketStore";
 import React, { useEffect, useRef, useState } from "react";
+import { FaTrashAlt } from "react-icons/fa";
 
 type Props = {
 	roomName: string;
@@ -17,6 +18,7 @@ export default function ChatRoom({ roomName }: Props) {
 		setSelectedRoom,
 		socket,
 		roomsMesages,
+		setRoomsMessages,
 	} = useSocketStore();
 	const room = rooms[roomName];
 	const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +34,7 @@ export default function ChatRoom({ roomName }: Props) {
 
 	const [msg, setMsg] = useState("");
 	const sendMessage = (text: string) => {
-		if (msg === "") return
+		if (msg === "") return;
 		socket!.emit("message", {
 			message: text,
 			roomName: roomName,
@@ -47,12 +49,12 @@ export default function ChatRoom({ roomName }: Props) {
 
 	const msgLength = roomsMesages[roomName]?.length ?? 0;
 
-    useEffect(() => {
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-                chatContainerRef.current.scrollHeight
-        }
-    }, [msgLength])
+	useEffect(() => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
+		}
+	}, [msgLength]);
 
 	if (!room || !roomsMesages[roomName])
 		return (
@@ -63,6 +65,14 @@ export default function ChatRoom({ roomName }: Props) {
 		);
 
 	const messages = roomsMesages[roomName];
+
+	const deleteHandler = (index: number) => {
+		const oldMessages = roomsMesages;
+		oldMessages[roomName] = oldMessages[roomName].filter(
+			(_, i) => i !== index
+		);
+		setRoomsMessages(oldMessages);
+	};
 
 	return (
 		<>
@@ -86,7 +96,7 @@ export default function ChatRoom({ roomName }: Props) {
 				</div>
 			</div>
 			<div
-				className="flex flex-col bg-slate-100 px-2 h-[300px] w-full overflow-scroll"
+				className="flex flex-col bg-slate-100 px-2 h-[300px] w-full overflow-y-scroll"
 				ref={chatContainerRef}
 			>
 				{messages.map((message, index) => (
@@ -106,7 +116,8 @@ export default function ChatRoom({ roomName }: Props) {
 								</div>
 							)
 						) : (
-							<div className="w-full">
+							<div className="w-full break-words">
+								<span className="cursor-pointer" onClick={() => deleteHandler(index)}>🗑️</span>
 								<b>
 									{clients[message.senderId]?.name ??
 										"unknown"}
