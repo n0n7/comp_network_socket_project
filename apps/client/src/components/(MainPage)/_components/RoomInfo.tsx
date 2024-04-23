@@ -2,19 +2,26 @@ import { useSocketStore } from "@/stores/socketStore";
 import { useState } from "react";
 import { IoArrowForwardCircleOutline } from "react-icons/io5";
 import { useDmStore } from "@/stores/directMessageStore";
+import { useRoomStatusStore } from "@/stores/roomStatusStore";
 
 type Props = {
     roomName: string;
 };
 
 export default function RoomInfo({ roomName }: Props) {
-    const { rooms, clients, nickname } = useSocketStore();
+    const { socket, rooms, clients, nickname } = useSocketStore();
     const [showedInfo, setShowedInfo] = useState(true);
+    const { setIsGroup } = useRoomStatusStore();
 
     const room = rooms[roomName];
     if (!room) return <></>;
 
     const clientInRoom = room.clientIds.map((clientId) => clients[clientId]);
+
+    const kickHandler = (clientId: string) => {
+        console.log("kickHandler");
+        socket!.emit("kick", { clientId, roomName });
+    };
 
     return (
         <div>
@@ -48,9 +55,23 @@ export default function RoomInfo({ roomName }: Props) {
                                     className="flex justify-between"
                                     key={client.id}
                                 >
-                                    <div className="flex">
+                                    <div className="flex items-center">
                                         <IoArrowForwardCircleOutline className="mr-2" />{" "}
                                         {client.name}
+                                    </div>
+                                    <div>
+                                        {client.name !== nickname ? (
+                                            <button
+                                                className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
+                                                onClick={() =>
+                                                    kickHandler(client.id)
+                                                }
+                                            >
+                                                Kick
+                                            </button>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                 </div>
                             );

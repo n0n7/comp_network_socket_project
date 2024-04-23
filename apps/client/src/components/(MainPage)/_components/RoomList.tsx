@@ -27,7 +27,7 @@ export default function RoomList() {
             <div className="flex justify-between">
                 <h2 className="text-lg font-medium">Public chat</h2>
                 <button
-                    className="border-2 border-gray-300 rounded-md p-1/2 bg-orange-500 text-white px-1"
+                    className="border-2 border-gray-300 rounded-md p-1/2 bg-orange-600 text-white px-1"
                     onClick={() => setShowRooms(!showRooms)}
                 >
                     {showRooms ? "Hide" : "Show"}
@@ -56,9 +56,6 @@ export default function RoomList() {
                                                 if (!isJoined) {
                                                     handleJoinRoom(room.name);
                                                 }
-                                                setIsDm(false);
-                                                setIsGroup(true);
-                                                setSelectedRoom(room.name);
                                                 const roomMsgs =
                                                     roomsMesages[room.name];
                                                 if (!roomMsgs) {
@@ -67,6 +64,9 @@ export default function RoomList() {
                                                         [room.name]: [],
                                                     });
                                                 }
+                                                setIsDm(false);
+                                                setIsGroup(true);
+                                                setSelectedRoom(room.name);
                                             }}
                                         >
                                             {isJoined ? "Enter" : "Join"}

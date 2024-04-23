@@ -12,9 +12,18 @@ import { useDmStore } from "@/stores/directMessageStore";
 type Props = {};
 
 export default function MainPage({}: Props) {
-    const { isDm, isGroup } = useRoomStatusStore();
+    const { isDm, isGroup, setIsGroup } = useRoomStatusStore();
     const { clientId } = useDmStore();
-    const { selectedRoom } = useSocketStore();
+    const { selectedRoom, setSelectedRoom, joinedRoomList } = useSocketStore();
+
+    if (selectedRoom !== "") {
+        const exist = joinedRoomList.includes(selectedRoom);
+        if (!exist) {
+            setSelectedRoom("");
+            setIsGroup(false);
+        }
+    }
+
     return (
         <>
             <div className="text-2xl font-bold mb-1">Main Page</div>
