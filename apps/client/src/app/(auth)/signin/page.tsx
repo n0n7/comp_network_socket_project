@@ -31,7 +31,7 @@ export default function SignInPage() {
     };
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="w-[30%] h-full bg-slate-200 p-2">
+            <div className="w-[30%] h-screen bg-slate-200 p-2">
                 <div>
                     <h1 className="text-xl font-bold mb-2">Sign In</h1>
                     <div className="flex justify-between">
