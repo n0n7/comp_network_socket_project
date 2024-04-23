@@ -101,7 +101,7 @@ export default function ChatRoom({ roomName }: Props) {
 									{message.message}
 								</div>
 							) : (
-								<div className="w-fit bg-[#ff3d46] py-1 px-2 m-2 rounded-lg">
+								<div className="w-fit bg-[#ff5b63] py-1 px-2 m-2 rounded-lg">
 									{message.message}
 								</div>
 							)

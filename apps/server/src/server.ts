@@ -238,6 +238,7 @@ io.on("connection", (socket) => {
                 socket.leave(roomName)
                 io.to(roomName).emit("broadcast", {
                     message: `${disconnectedClient.name} has left the room`,
+                    type: "leave",
                     roomName: roomName,
                 })
                 rooms[roomName].clientIds = rooms[roomName].clientIds.filter(

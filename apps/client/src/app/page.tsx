@@ -40,20 +40,30 @@ export default function Home() {
         return <div></div>
     }
 
-    const client = clients[socket?.id!]
+	const client = clients[socket?.id!];
 
-    return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="w-[30%] h-screen bg-slate-200 p-2">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h1 className="text-3xl font-bold">Home</h1>
-                        <p>
-                            Welcome,{" "}
-                            <span className="font-semibold">
-                                {nickname} level: {client?.experience}
-                            </span>
-                        </p>
+	const experienceToLevel = (experience: number): number => {
+		return Math.floor(Math.sqrt(experience));
+	};
+
+	return (
+		<div className="flex flex-col items-center justify-center">
+			<div className="w-[30%] h-screen bg-slate-200 p-2">
+				<div className="flex justify-between items-center">
+					<div>
+						<h1 className="text-3xl font-bold">Home</h1>
+						<p>
+							Welcome,{" "}
+							<span className="font-semibold">
+								{nickname} Level:{" "}
+								{experienceToLevel(client?.experience || 0)} (
+								{client?.experience}/
+								{(experienceToLevel(client?.experience || 0) +
+									1) **
+									2}
+								)
+							</span>
+						</p>
                         <input
                             value={newName}
                             onChange={(e) => setNewName(e.target.value)}
@@ -61,16 +71,16 @@ export default function Home() {
                         <button className="border-2 border-gray-300 rounded-md p-1/2 bg-blue-600 text-white px-1" onClick={handleChangeName}>
                             change name
                         </button>
-                    </div>
-                    <div>
-                        <button
-                            className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
-                            onClick={logout}
-                        >
-                            Logout
-                        </button>
-                    </div>
-                </div>
+					</div>
+					<div>
+						<button
+							className="border-2 border-gray-300 rounded-md p-1/2 bg-red-600 text-white px-1"
+							onClick={logout}
+						>
+							Logout
+						</button>
+					</div>
+				</div>
 
                 <div className="mt-4">
                     <MainPage />
