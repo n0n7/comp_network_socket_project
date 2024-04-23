@@ -3,7 +3,7 @@ import express, { Request, Response } from "express"
 import { Server, Socket } from "socket.io"
 import cors from "cors"
 import http, { get } from "http"
-import { getUser, signin, signup } from "./auth"
+import { getUser, signin, signup, updateUser } from "./auth"
 
 const app = express()
 const server = http.createServer(app)
@@ -74,6 +74,7 @@ io.on("connection", (socket) => {
     socket.on(
         "set_name",
         async ({ name, uid = testUid }: { name: string; uid?: string }) => {
+            console.log(uid)
             const userData = await getUser(uid)
             clients[socket.id] = {
                 id: socket.id,
@@ -240,6 +241,10 @@ io.on("connection", (socket) => {
         }
         io.emit("clients", getClients())
         io.emit("rooms", rooms)
+        updateUser(disconnectedClient.uid, { 
+            experience: disconnectedClient.experience,
+            username: disconnectedClient.name
+        })
     })
 })
 

@@ -6,6 +6,7 @@ export const useUser = () => {
 
     const login = async (data: { email: string; password: string }) => {
         const res = await UserService.login(data)
+        console.log(res.data)
         userStore.setUser(res.data.user)
         userStore.setIsLoggedIn(true)
     }

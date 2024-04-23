@@ -16,6 +16,7 @@ export default function Home() {
     const router = useRouter();
 
     const { nickname, setNickname, reset, clients, socket } = useSocketStore();
+    
 
     useSocket();
 
@@ -24,16 +25,13 @@ export default function Home() {
             reset();
             router.push("/signin");
         }
+        else {
+            setNickname(user?.username!)
+        }
     }, [isLoggedIn, router, reset]);
 
     if (!nickname) {
-        return (
-            <div>
-                <JoinServerPage
-                    handleSubmit={(newNickName) => setNickname(newNickName)}
-                />
-            </div>
-        );
+        return <div></div>;
     }
 
     const client = clients[socket?.id!]

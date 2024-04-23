@@ -6,11 +6,13 @@ import {
     RoomsData,
     useSocketStore,
 } from "@/stores/socketStore"
+import { useUserStore } from "@/stores/userStore"
 import { useEffect, useState } from "react"
 import { io } from "socket.io-client"
 
 export const useSocket = () => {
     const socketStore = useSocketStore()
+    const userStore = useUserStore()
 
     useEffect(() => {
         if (socketStore.nickname) {
@@ -18,7 +20,8 @@ export const useSocket = () => {
 
             socket.on("connect", () => {
                 console.log("Socket connected")
-                socket.emit("set_name", { name: socketStore.nickname, uid: "" }) // TODO:change uid when it's ready
+                console.log(userStore.user?.uid)
+                socket.emit("set_name", { name: socketStore.nickname, uid: userStore.user?.uid }) // TODO:change uid when it's ready
             })
 
             socket.on("clients", (clients: ClientsData) => {

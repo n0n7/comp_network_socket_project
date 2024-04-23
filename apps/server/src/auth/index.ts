@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore"
+import { collection, query, where, getDocs, addDoc, updateDoc, doc, getDoc } from "firebase/firestore"
 import { db } from "../firebase/firebaseconfig"
 
 interface User {
@@ -49,10 +49,14 @@ export async function signup(
         )
         const newUserDoc = newUserQuerySnapshot.docs[0]
         const newUser = newUserDoc.data()
+        const uid = newUserDoc.id
 
         res.status(201).json({
             message: "User created successfully",
-            user: newUser,
+            user: {
+                ...newUser,
+                uid,
+            },
         })
     } catch (error) {
         console.error(error)
@@ -93,12 +97,19 @@ export async function signin(
         }
 
         const user = existingUser.docs[0].data()
+        const uid = existingUser.docs[0].id
+        
+
         if (user.password !== password) {
             return res.status(400).json({ error: "Incorrect password" })
         }
-
+        
         res.status(200).json({
-            user,
+            message: "User signed in successfully",
+            user: {
+                ...user,
+                uid,
+            },
         })
     } catch (error) {
         console.error(error)
@@ -115,7 +126,18 @@ export async function getUser(uid: string): Promise<User> {
             password: "",
         }
     }
-    const usersRef = collection(db, "users")
-    const user = await getDocs(query(usersRef, where("uid", "==", uid)))
-    return user.docs[0].data() as User
+    const userDocRef = doc(db, "users", uid)
+    const user = await getDoc(userDocRef)
+    console.log(user.data())
+    return user.data() as User
 }
+
+export async function updateUser(uid: string, data: Partial<User>) {
+    const userDocRef = doc(db, "users", uid)
+    const user = await getDoc(userDocRef)
+    if (!user.exists()) {
+        throw new Error("User not found")
+    }
+    await updateDoc(userDocRef, data)
+}
+
