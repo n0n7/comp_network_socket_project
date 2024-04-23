@@ -76,6 +76,7 @@ export default function ChatRoom({ roomName }: Props) {
                     onChange={(e) => {
                         setMsg(e.target.value)
                     }}
+                    value={msg}
                 />
                 <button
                     className="border-2 border-gray-300 rounded-md p-1/2 bg-blue-600 text-white px-1"
